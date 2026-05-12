@@ -40,7 +40,12 @@ export default function handler(req, res) {
   }
 
   const fixtures = loadFixtures();
-  const filtered = fixtures.filter(f => selected.has(f.home) || selected.has(f.away));
+  const hasTop14 = fixtures.some(f => (selected.has(f.home) || selected.has(f.away)) && f.comp?.startsWith('Top 14'));
+  const filtered = fixtures.filter(f =>
+    selected.has(f.home) || selected.has(f.away) ||
+    // Phases finales TBD : visibles pour tout abonné Top 14 (équipes inconnues)
+    (hasTop14 && (f.home === 'tbd' || f.away === 'tbd'))
+  );
 
   const lines = [
     'BEGIN:VCALENDAR',
@@ -58,7 +63,11 @@ export default function handler(req, res) {
   filtered.forEach(f => {
     lines.push('BEGIN:VEVENT');
     lines.push(`UID:${f.id}@calvirage.fr`);
-    lines.push(`SUMMARY:🏉 ${esc(f.homeName || f.home)} - ${esc(f.awayName || f.away)}`);
+    const isTbd = f.home === 'tbd' || f.away === 'tbd';
+    const summary = isTbd
+      ? `🏉 ${esc(f.comp)}`
+      : `🏉 ${esc(f.homeName || f.home)} - ${esc(f.awayName || f.away)}`;
+    lines.push(`SUMMARY:${summary}`);
     lines.push(`DTSTART;TZID=Europe/Paris:${formatDt(f.date, f.time)}`);
     lines.push(`DTEND;TZID=Europe/Paris:${addHours(f.date, f.time, 2)}`);
     if (f.venue) lines.push(`LOCATION:${esc(f.venue)}`);

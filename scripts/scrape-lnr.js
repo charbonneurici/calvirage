@@ -12,6 +12,14 @@ const SEASON = '2025-2026';
 const TOTAL_ROUNDS = 26;
 const OUTPUT_FILE = path.join(__dirname, '..', 'data', 'fixtures.json');
 
+// Phases finales : label LNR → métadonnées fixes
+const PLAYOFF_ROUNDS = [
+  { label: 'Barrage',       comp: 'Top 14 — Barrage',      roundKey: 'barrage' },
+  { label: 'Access TOP 14', comp: 'Top 14 — Access',        roundKey: 'access'  },
+  { label: 'Demi-Finale',   comp: 'Top 14 — Demi-Finale',  roundKey: 'demie'   },
+  { label: 'Finale',        comp: 'Top 14 — Finale',        roundKey: 'finale'  },
+];
+
 const VENUES = {
   'toulouse':          'Stade Ernest-Wallon, Toulouse',
   'la-rochelle':       'Stade Marcel-Deflandre, La Rochelle',
@@ -141,10 +149,14 @@ async function extractRoundData(page) {
         if (!matchLine) continue;
 
         // Teams: home = first club-line--reversed, away = second club-line
+        // For TBD matches, no img — fall back to text content of the club-line
         const homeImg = matchLine.querySelector('.club-line--reversed img');
         const awayImg = matchLine.querySelector('.club-line:not(.club-line--reversed) img');
-        const home = homeImg?.alt?.trim() || '';
-        const away = awayImg?.alt?.trim() || '';
+        const homeNameEl = matchLine.querySelector('.club-line--reversed .club-line__name');
+        const awayNameEl = matchLine.querySelector('.club-line:not(.club-line--reversed) .club-line__name');
+
+        const home = homeImg?.alt?.trim() || homeNameEl?.innerText?.trim() || '';
+        const away = awayImg?.alt?.trim() || awayNameEl?.innerText?.trim() || '';
 
         // Time
         const timeEl = matchLine.querySelector('.match-line__time');
@@ -258,6 +270,69 @@ async function main() {
         status:   row.time ? 'scheduled' : 'played',
       });
       added++;
+    }
+
+    console.log(`${added} matchs ✅${rows.length === 0 ? ' (page vide?)' : ''}`);
+  }
+
+  // Phases finales
+  console.log('\n🏆 Phases finales...');
+  for (const playoff of PLAYOFF_ROUNDS) {
+    process.stdout.write(`  ${playoff.label}... `);
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        await page.locator('#Journée').selectOption({ label: playoff.label });
+        await page.waitForTimeout(2500);
+        break;
+      } catch {
+        await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+        await page.waitForTimeout(3000);
+      }
+    }
+
+    let rows = await extractRoundData(page).catch(() => []);
+    if (rows.length === 0) {
+      await page.waitForTimeout(2000);
+      rows = await extractRoundData(page).catch(() => []);
+    }
+
+    let added = 0;
+    let matchIndex = 1;
+    for (const row of rows) {
+      const date = parseFrenchDate(row.date || '');
+      if (!date) {
+        console.warn(`  ⚠️  Date non parsée: "${row.date}"`);
+        continue;
+      }
+
+      const matchId = matchIdFromLink(row.href);
+      const uid = matchId || `${playoff.roundKey}-${matchIndex}`;
+      if (seenIds.has(uid)) { matchIndex++; continue; }
+      seenIds.add(uid);
+
+      // Équipes connues ou TBD
+      const isTbd = !row.home || row.home === '-' || !row.away || row.away === '-';
+      const homeId   = isTbd ? 'tbd' : toTeamId(row.home);
+      const awayId   = isTbd ? 'tbd' : toTeamId(row.away);
+      const homeName = isTbd ? 'À déterminer' : row.home;
+      const awayName = isTbd ? 'À déterminer' : row.away;
+
+      allMatches.push({
+        id:       matchId ? `lnr-${matchId}` : `lnr-${playoff.roundKey}-${matchIndex}`,
+        round:    playoff.roundKey,
+        comp:     playoff.comp,
+        home:     homeId,
+        away:     awayId,
+        homeName: homeName,
+        awayName: awayName,
+        date,
+        time:     parseTime(row.time),
+        venue:    venueFromLink(row.href),
+        status:   isTbd ? 'tbd' : 'scheduled',
+      });
+      added++;
+      matchIndex++;
     }
 
     console.log(`${added} matchs ✅${rows.length === 0 ? ' (page vide?)' : ''}`);
