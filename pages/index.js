@@ -3,6 +3,9 @@ import Head from 'next/head';
 import { TOP14_TEAMS } from '../lib/rugby';
 
 function TeamCard({ team, selected, onToggle }) {
+  const [imgError, setImgError] = useState(false);
+  const showLogo = team.logo && !imgError;
+
   return (
     <button
       onClick={() => onToggle(team.id)}
@@ -19,11 +22,22 @@ function TeamCard({ team, selected, onToggle }) {
           </svg>
         </span>
       )}
-      <div
-        className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-xs tracking-tight"
-        style={{ backgroundColor: selected ? 'rgba(255,255,255,0.12)' : team.color, color: selected ? '#fff' : team.text }}
-      >
-        {team.abbrev}
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden ${selected ? 'bg-white/10' : 'bg-white'}`}>
+        {showLogo ? (
+          <img
+            src={team.logo}
+            alt={team.name}
+            className="w-11 h-11 object-contain"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-xs tracking-tight"
+            style={{ backgroundColor: team.color, color: team.text }}
+          >
+            {team.abbrev}
+          </div>
+        )}
       </div>
       <span className={`text-[10px] font-black uppercase tracking-tight text-center leading-tight w-full ${selected ? 'text-white' : 'text-[#444]'}`}>
         {team.name}
