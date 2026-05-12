@@ -95,20 +95,7 @@ export default function Home({ teams }) {
         {/* Header */}
         <header className="bg-white border-b border-[#E8E8E6]">
           <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-xl font-black tracking-tight text-[#111]">CalVirage</span>
-              <span className="hidden sm:block text-[11px] text-[#AAA] font-medium border border-[#E8E8E6] rounded-full px-3 py-0.5">
-                Les vrais fans s&apos;organisent
-              </span>
-            </div>
-            <a
-              href="https://github.com"
-              className="text-xs text-[#999] hover:text-[#111] transition-colors font-medium"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub →
-            </a>
+            <span className="text-xl font-black tracking-tight text-[#111]">Les vrais fans s&apos;organisent</span>
           </div>
         </header>
 
@@ -116,13 +103,16 @@ export default function Home({ teams }) {
 
           {/* Hero */}
           <div className="mb-10">
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-[#111] leading-none mb-3">
-              Votre calendrier,<br />
-              <span className="text-[#E63329]">vos matchs.</span>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-[#111] leading-none mb-5">
+              Ne loupe plus jamais<br />
+              <span className="text-[#E63329]">un match de ton équipe.</span>
             </h1>
-            <p className="text-base md:text-lg text-[#777] max-w-md">
-              Choisissez vos équipes. Synchronisez avec Google ou Apple Calendar. Mis à jour automatiquement.
-            </p>
+            <ol className="text-base md:text-lg text-[#777] space-y-1">
+              <li>1. Choisis tes équipes</li>
+              <li>2. Ajoute le lien à ton calendrier (en t&apos;abonnant)</li>
+              <li>3. Ne loupe plus jamais un match de ton équipe préférée</li>
+            </ol>
+            <p className="text-sm text-[#AAA] mt-3">Mis à jour automatiquement.</p>
           </div>
 
           {/* Sport tabs */}
@@ -149,7 +139,7 @@ export default function Home({ teams }) {
             <div className="flex items-start justify-between mb-6">
               <div>
                 <h2 className="text-lg font-black text-[#111]">Choisissez vos équipes</h2>
-                <p className="text-sm text-[#999] mt-0.5">Top 14 · Champions Cup · Challenge Cup</p>
+                <p className="text-sm text-[#999] mt-0.5">Top 14</p>
               </div>
               <button
                 onClick={toggleAll}
@@ -236,7 +226,7 @@ export default function Home({ teams }) {
         <footer className="border-t border-[#E8E8E6] bg-white mt-16">
           <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
             <span className="text-sm font-black text-[#111]">CalVirage</span>
-            <span className="text-xs text-[#BBB]">Top 14 · Champions Cup · Challenge Cup</span>
+            <span className="text-xs text-[#BBB]">Top 14</span>
           </div>
         </footer>
       </div>
