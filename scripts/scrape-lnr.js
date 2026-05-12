@@ -201,21 +201,33 @@ async function main() {
   const seenIds = new Set();
 
   for (const opt of journeeOptions) {
-    const roundNum = parseInt(opt.text.replace(/[^\d]/g, ''));
+    // Uniquement les options "J1"…"J26" (évite "Access TOP 14" etc.)
+    if (!/^J\d+$/.test(opt.text)) continue;
+    const roundNum = parseInt(opt.text.slice(1));
     if (!roundNum || roundNum > TOTAL_ROUNDS) continue;
 
     process.stdout.write(`  J${String(roundNum).padStart(2)}... `);
 
-    try {
-      await page.locator('#Journée').selectOption({ label: opt.text });
-      await page.waitForTimeout(2000);
-    } catch (e) {
-      // Page may reload on last selection — wait and re-check
-      await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
-      await page.waitForTimeout(1000);
+    // Select the round — retry once if context is destroyed or no data
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        await page.locator('#Journée').selectOption({ label: opt.text });
+        await page.waitForTimeout(2500);
+        break;
+      } catch {
+        // Context destroyed = page navigated, wait for reload
+        await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+        await page.waitForTimeout(3000);
+      }
     }
 
-    const rows = await extractRoundData(page).catch(() => []);
+    let rows = await extractRoundData(page).catch(() => []);
+
+    // If empty, wait a bit more and retry extraction (page may still be rendering)
+    if (rows.length === 0) {
+      await page.waitForTimeout(2000);
+      rows = await extractRoundData(page).catch(() => []);
+    }
 
     let added = 0;
     for (const row of rows) {
