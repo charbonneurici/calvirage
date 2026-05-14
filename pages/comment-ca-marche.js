@@ -5,7 +5,7 @@ const steps = [
   {
     num: '1',
     title: 'Choisis tes équipes',
-    desc: 'Sélectionne une ou plusieurs équipes parmi les 14 clubs du Top 14. Tu peux aussi mélanger rugby, et bientôt d'autres sports.',
+    desc: "Sélectionne une ou plusieurs équipes parmi les 14 clubs du Top 14. Tu peux aussi mélanger rugby, et bientôt d'autres sports.",
     emoji: '🏉',
   },
   {
@@ -16,14 +16,14 @@ const steps = [
   },
   {
     num: '3',
-    title: 'Abonne-toi — une seule fois',
-    desc: 'Ajoute le lien à Apple Calendar, Google Calendar ou Outlook. C'est un abonnement : il se met à jour tout seul à chaque nouveau match ou changement d'horaire.',
+    title: "Abonne-toi — une seule fois",
+    desc: "Ajoute le lien à Apple Calendar, Google Calendar ou Outlook. C'est un abonnement : il se met à jour tout seul à chaque nouveau match ou changement d'horaire.",
     emoji: '📅',
   },
   {
     num: '4',
     title: 'Profite',
-    desc: 'Tous les matchs apparaissent dans ton agenda habituel, avec le nom des équipes et l'heure. Plus jamais un match loupé.',
+    desc: "Tous les matchs apparaissent dans ton agenda habituel, avec le nom des équipes et l'heure. Plus jamais un match loupé.",
     emoji: '✅',
   },
 ];
@@ -34,9 +34,9 @@ const platforms = [
     emoji: '🍎',
     steps: [
       'Clique sur le bouton "+ Apple Calendar"',
-      'iOS / macOS ouvre automatiquement l'application Calendrier',
-      'Confirme l'abonnement',
-      'C'est bon — les matchs apparaissent instantanément',
+      "iOS / macOS ouvre automatiquement l'application Calendrier",
+      "Confirme l'abonnement",
+      "C'est bon — les matchs apparaissent instantanément",
     ],
   },
   {
@@ -44,9 +44,9 @@ const platforms = [
     emoji: '🗓',
     steps: [
       'Clique sur "+ Google Calendar"',
-      'Google te demande de confirmer l'ajout',
+      "Google te demande de confirmer l'ajout",
       'Les matchs apparaissent dans ton agenda (peut prendre quelques minutes)',
-      'Fonctionne aussi sur Android via l'app Google Calendar',
+      "Fonctionne aussi sur Android via l'app Google Calendar",
     ],
   },
   {
@@ -63,12 +63,12 @@ const platforms = [
 
 const faq = [
   {
-    q: 'C'est gratuit ?',
-    a: 'Oui, totalement gratuit. Pas d'inscription, pas de carte bancaire.',
+    q: "C'est gratuit ?",
+    a: "Oui, totalement gratuit. Pas d'inscription, pas de carte bancaire.",
   },
   {
     q: 'Le calendrier se met à jour automatiquement ?',
-    a: 'Oui. Dès qu'un match est ajouté, déplacé ou annulé, ton agenda se synchronise. Apple Calendar vérifie toutes les heures, Google Calendar toutes les 24h environ.',
+    a: "Oui. Dès qu'un match est ajouté, déplacé ou annulé, ton agenda se synchronise. Apple Calendar vérifie toutes les heures, Google Calendar toutes les 24h environ.",
   },
   {
     q: 'Quels matchs sont inclus ?',
@@ -76,11 +76,11 @@ const faq = [
   },
   {
     q: 'Et si un match est reporté ou annulé ?',
-    a: 'Le calendrier se met à jour automatiquement dès que l'info est disponible. Nos scrapers tournent deux fois par semaine (lundi et jeudi).',
+    a: "Le calendrier se met à jour automatiquement dès que l'info est disponible. Nos scrapers tournent deux fois par semaine (lundi et jeudi).",
   },
   {
-    q: 'Pourquoi un abonnement plutôt qu'un fichier .ics à télécharger ?',
-    a: 'Un fichier .ics est statique : si les horaires changent, ton agenda ne le sait pas. Un abonnement est dynamique : il se synchronise automatiquement.',
+    q: "Pourquoi un abonnement plutôt qu'un fichier .ics à télécharger ?",
+    a: "Un fichier .ics est statique : si les horaires changent, ton agenda ne le sait pas. Un abonnement est dynamique : il se synchronise automatiquement.",
   },
   {
     q: 'Ça marche sur iPhone / Android ?',
@@ -97,6 +97,9 @@ export default function HowItWorks() {
         <meta property="og:title" content="Comment ça marche — CalVirage" />
         <meta property="og:description" content="Abonne-toi aux matchs de rugby en 2 minutes. Guide complet pour Apple Calendar, Google Calendar et Outlook." />
         <meta property="og:image" content="https://calvirage.vercel.app/api/og" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏉</text></svg>" />
       </Head>
