@@ -2,14 +2,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { TOP14_TEAMS } from '../lib/rugby';
-
-const WEEKDAYS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-const MONTHS = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sep', 'oct', 'nov', 'déc'];
-
-function formatDate(dateStr) {
-  const d = new Date(dateStr + 'T12:00:00');
-  return `${WEEKDAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
-}
+import { MatchRow } from '../lib/MatchRow';
 
 function TeamCard({ team, selected, onToggle }) {
   const [imgError, setImgError] = useState(false);
@@ -240,49 +233,16 @@ export default function Home({ teams }) {
               {/* Match preview */}
               {preview && preview.length > 0 && (
                 <div className="mt-5 border-t border-[#F0EFEC] pt-5">
-                  <p className="text-xs font-black text-[#111] mb-3 uppercase tracking-wide">Prochains matchs inclus</p>
+                  <p className="text-xs font-black text-[#111] mb-1 uppercase tracking-wide">Prochains matchs inclus</p>
                   <div>
-                    {preview.map(m => {
-                      const isTbd = m.home === 'tbd' || m.away === 'tbd';
-                      const selArr = Array.from(selected);
-                      const isHome = selArr.includes(m.home);
-                      const teamId = isHome ? m.home : m.away;
-                      const oppId = isHome ? m.away : m.home;
-                      const oppTeam = TOP14_TEAMS.find(t => t.id === oppId);
-                      const oppName = isHome ? (m.awayName || m.away) : (m.homeName || m.home);
-                      return (
-                        <div key={m.id} className="flex items-center gap-3 py-2 border-b border-[#F7F6F3] last:border-0">
-                          <div className="w-16 shrink-0 text-right">
-                            <div className="text-[11px] font-bold text-[#111]">{formatDate(m.date)}</div>
-                            <div className="text-[10px] text-[#CCC]">{m.time}</div>
-                          </div>
-                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider shrink-0 ${
-                            isTbd ? 'bg-[#F0EFEC] text-[#999]' :
-                            isHome ? 'bg-[#E8F5E9] text-[#2E7D32]' : 'bg-[#FFF3E0] text-[#E65100]'
-                          }`}>
-                            {isTbd ? '?' : isHome ? 'DOM' : 'EXT'}
-                          </span>
-                          <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                            {!isTbd && oppTeam?.logo && (
-                              <img src={oppTeam.logo} alt="" className="w-5 h-5 object-contain shrink-0"
-                                onError={e => { e.target.style.display='none'; }} />
-                            )}
-                            <span className="text-xs text-[#444] truncate">
-                              {isTbd ? 'À déterminer' : oppName}
-                            </span>
-                          </div>
-                          <span className="text-[9px] text-[#CCC] shrink-0">
-                            {m.comp.replace('Top 14 — ', '').replace('Top 14', 'J' + m.round)}
-                          </span>
-                        </div>
-                      );
-                    })}
+                    {preview.map(m => (
+                      <MatchRow key={m.id} match={m}
+                        highlightId={selected.size === 1 ? Array.from(selected)[0] : null} />
+                    ))}
                   </div>
                   {selected.size === 1 && (
-                    <Link
-                      href={`/${Array.from(selected)[0]}`}
-                      className="block mt-3 text-center text-xs font-bold text-[#E63329] hover:underline"
-                    >
+                    <Link href={`/${Array.from(selected)[0]}`}
+                      className="block mt-3 text-center text-xs font-bold text-[#E63329] hover:underline">
                       Voir tous les matchs →
                     </Link>
                   )}

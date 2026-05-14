@@ -4,6 +4,7 @@ import Link from 'next/link';
 import path from 'path';
 import fs from 'fs';
 import { TOP14_TEAMS } from '../lib/rugby';
+import { MatchRow } from '../lib/MatchRow';
 
 function TeamLogo({ team }) {
   const [err, setErr] = useState(false);
@@ -22,63 +23,6 @@ function TeamLogo({ team }) {
   );
 }
 
-const WEEKDAYS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-const MONTHS = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sep', 'oct', 'nov', 'déc'];
-
-function formatDate(dateStr) {
-  const d = new Date(dateStr + 'T12:00:00');
-  return `${WEEKDAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
-}
-
-function MatchRow({ match, teamId }) {
-  const isHome = match.home === teamId;
-  const opponent = isHome
-    ? (match.awayName || match.away)
-    : (match.homeName || match.home);
-  const opponentTeam = TOP14_TEAMS.find(t => t.id === (isHome ? match.away : match.home));
-  const [imgError, setImgError] = useState(false);
-
-  const isPast = match.date < new Date().toISOString().slice(0, 10);
-  const isTbd = match.home === 'tbd' || match.away === 'tbd';
-
-  return (
-    <div className={`flex items-center gap-3 py-3 border-b border-[#F0EFEC] last:border-0 ${isPast ? 'opacity-50' : ''}`}>
-      {/* Date */}
-      <div className="w-20 shrink-0 text-right">
-        <div className="text-xs font-bold text-[#111]">{formatDate(match.date)}</div>
-        <div className="text-[10px] text-[#AAA]">{match.time}</div>
-      </div>
-
-      {/* H/A badge */}
-      <span className={`text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider ${
-        isTbd ? 'bg-[#F0EFEC] text-[#999]' :
-        isHome ? 'bg-[#E8F5E9] text-[#2E7D32]' : 'bg-[#FFF3E0] text-[#E65100]'
-      }`}>
-        {isTbd ? '?' : isHome ? 'DOM' : 'EXT'}
-      </span>
-
-      {/* Opponent */}
-      <div className="flex items-center gap-2 flex-1 min-w-0">
-        {!isTbd && opponentTeam?.logo && (
-          <img
-            src={opponentTeam.logo}
-            alt={opponentTeam.name}
-            className="w-6 h-6 object-contain shrink-0"
-            onError={(e) => { e.target.style.display = 'none'; }}
-          />
-        )}
-        <span className="text-sm font-semibold text-[#111]">
-          {isTbd ? 'À déterminer' : opponent}
-        </span>
-      </div>
-
-      {/* Comp badge */}
-      <span className="text-[9px] font-bold text-[#999] bg-[#F7F6F3] px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
-        {match.comp.replace('Top 14 — ', '').replace('Top 14', 'J' + match.round)}
-      </span>
-    </div>
-  );
-}
 
 export default function TeamPage({ team, upcoming, past, calUrl }) {
   const [copied, setCopied] = useState(false);
@@ -175,7 +119,7 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
               <p className="text-sm text-[#AAA] text-center py-4">Aucun match à venir.</p>
             ) : (
               <div>
-                {upcoming.map(m => <MatchRow key={m.id} match={m} teamId={team.id} />)}
+                {upcoming.map(m => <MatchRow key={m.id} match={m} highlightId={team.id} />)}
               </div>
             )}
           </div>
