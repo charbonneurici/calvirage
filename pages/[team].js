@@ -47,6 +47,8 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
         <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={`https://calvirage.vercel.app/api/og?team=${team.id}`} />
+        <meta property="og:url" content={`https://calvirage.vercel.app/${team.id}`} />
+        <link rel="canonical" href={`https://calvirage.vercel.app/${team.id}`} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏉</text></svg>" />
       </Head>
@@ -59,7 +61,9 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
             <Link href="/" className="text-sm font-black text-[#111] hover:text-[#E63329] transition-colors">
               ← CalVirage
             </Link>
-            <span className="text-xs text-[#AAA]">Les vrais fans s&apos;organisent</span>
+            <Link href="/comment-ca-marche" className="text-sm font-bold text-[#777] hover:text-[#111] transition-colors">
+              Comment ça marche ?
+            </Link>
           </div>
         </header>
 

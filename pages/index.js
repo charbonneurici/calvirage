@@ -103,6 +103,8 @@ export default function Home({ teams }) {
         <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content="https://calvirage.vercel.app/api/og" />
+        <meta property="og:url" content="https://calvirage.vercel.app/" />
+        <link rel="canonical" href="https://calvirage.vercel.app/" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏉</text></svg>" />
       </Head>
@@ -113,6 +115,9 @@ export default function Home({ teams }) {
         <header className="bg-white border-b border-[#E8E8E6]">
           <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
             <span className="text-xl font-black tracking-tight text-[#111]">Les vrais fans s&apos;organisent</span>
+            <Link href="/comment-ca-marche" className="text-sm font-bold text-[#777] hover:text-[#111] transition-colors">
+              Comment ça marche ?
+            </Link>
           </div>
         </header>
 
@@ -129,7 +134,13 @@ export default function Home({ teams }) {
               <li>2. Ajoute le lien à ton calendrier (en t&apos;abonnant)</li>
               <li>3. Ne loupe plus jamais un match de ton équipe préférée</li>
             </ol>
-            <p className="text-sm text-[#AAA] mt-3">Mis à jour automatiquement.</p>
+            <div className="flex items-center gap-3 mt-4">
+              <p className="text-sm text-[#AAA]">Mis à jour automatiquement.</p>
+              <span className="text-[#DDD]">·</span>
+              <Link href="/comment-ca-marche" className="text-sm font-bold text-[#E63329] hover:underline">
+                Comment ça marche ? →
+              </Link>
+            </div>
           </div>
 
           {/* Sport tabs */}
