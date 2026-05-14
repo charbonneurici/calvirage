@@ -2,7 +2,8 @@ name: Scraper Top 14 + Champions Cup + Challenge Cup
 
 on:
   schedule:
-    - cron: '0 6 * * 1'  # Chaque lundi à 6h (après le week-end de matchs)
+    - cron: '0 6 * * 1'  # Lundi à 6h (après le week-end de matchs)
+    - cron: '0 6 * * 4'  # Jeudi à 6h (matchs en semaine / reports)
   workflow_dispatch:       # Déclenchement manuel depuis GitHub
 
 jobs:

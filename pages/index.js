@@ -96,6 +96,13 @@ export default function Home({ teams }) {
       <Head>
         <title>CalVirage — Les vrais fans s&apos;organisent</title>
         <meta name="description" content="Créez votre calendrier sportif personnalisé. Ne ratez plus un seul match de vos équipes." />
+        <meta property="og:title" content="CalVirage — Les vrais fans s'organisent" />
+        <meta property="og:description" content="Abonne-toi aux matchs de tes équipes — Top 14, Champions Cup, Challenge Cup. Mis à jour automatiquement dans ton calendrier." />
+        <meta property="og:image" content="https://calvirage.vercel.app/api/og" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://calvirage.vercel.app/api/og" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏉</text></svg>" />
       </Head>
@@ -255,7 +262,13 @@ export default function Home({ teams }) {
         <footer className="border-t border-[#E8E8E6] bg-white mt-16">
           <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
             <span className="text-sm font-black text-[#111]">CalVirage</span>
-            <span className="text-xs text-[#BBB]">Top 14 · Champions Cup · Challenge Cup</span>
+            <div className="flex items-center gap-4">
+              <Link href="/comment-ca-marche" className="text-xs text-[#BBB] hover:text-[#111] transition-colors">
+                Comment ça marche ?
+              </Link>
+              <span className="text-xs text-[#DDD]">·</span>
+              <span className="text-xs text-[#BBB]">Top 14 · Champions Cup · Challenge Cup</span>
+            </div>
           </div>
         </footer>
       </div>
@@ -266,5 +279,6 @@ export default function Home({ teams }) {
 export async function getStaticProps() {
   return {
     props: { teams: TOP14_TEAMS },
+    revalidate: 3600,
   };
 }

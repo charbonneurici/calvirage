@@ -42,6 +42,11 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
         <meta name="description" content={`Tous les matchs de ${team.name} dans votre calendrier. Mis à jour automatiquement.`} />
         <meta property="og:title" content={`${team.name} sur CalVirage`} />
         <meta property="og:description" content={`Abonne-toi au calendrier de ${team.name} — mis à jour automatiquement.`} />
+        <meta property="og:image" content={`https://calvirage.vercel.app/api/og?team=${team.id}`} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={`https://calvirage.vercel.app/api/og?team=${team.id}`} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏉</text></svg>" />
       </Head>
@@ -125,15 +130,38 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
           </div>
 
           {/* Share */}
-          <div className="mt-4 text-center">
-            <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Les matchs de ${team.name} dans mon calendrier 🏉 ${typeof window !== 'undefined' ? window.location.href : ''}`)}`}
-              target="_blank"
-              rel="noreferrer"
-              className="text-xs text-[#AAA] hover:text-[#111] transition-colors"
-            >
-              Partager cette page →
-            </a>
+          <div className="mt-4 bg-white rounded-3xl border border-[#E8E8E6] p-5">
+            <p className="text-xs font-black text-[#111] uppercase tracking-wide mb-3">Partager cette page</p>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(`Les matchs de ${team.name} dans mon calendrier 🏉 https://calvirage.vercel.app/${team.id}`)}`}
+                target="_blank" rel="noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#25D366] text-white text-xs font-bold hover:opacity-90 transition-opacity"
+              >
+                <span>💬</span> WhatsApp
+              </a>
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Les matchs de ${team.name} dans mon calendrier 🏉`)}&url=${encodeURIComponent(`https://calvirage.vercel.app/${team.id}`)}`}
+                target="_blank" rel="noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#000] text-white text-xs font-bold hover:opacity-80 transition-opacity"
+              >
+                <span>𝕏</span> Twitter
+              </a>
+              <a
+                href={`https://t.me/share/url?url=${encodeURIComponent(`https://calvirage.vercel.app/${team.id}`)}&text=${encodeURIComponent(`Les matchs de ${team.name} dans ton calendrier 🏉`)}`}
+                target="_blank" rel="noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#0088cc] text-white text-xs font-bold hover:opacity-90 transition-opacity"
+              >
+                <span>✈️</span> Telegram
+              </a>
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://calvirage.vercel.app/${team.id}`)}`}
+                target="_blank" rel="noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#1877F2] text-white text-xs font-bold hover:opacity-90 transition-opacity"
+              >
+                <span>👍</span> Facebook
+              </a>
+            </div>
           </div>
         </main>
 
@@ -170,6 +198,7 @@ export async function getStaticProps({ params }) {
 
   return {
     props: { team, upcoming, past, calUrl },
+    revalidate: 3600,
   };
 }
 
