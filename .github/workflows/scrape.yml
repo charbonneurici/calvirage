@@ -1,4 +1,4 @@
-name: Scraper LNR Top 14
+name: Scraper Top 14 + Champions Cup + Challenge Cup
 
 on:
   schedule:
@@ -25,15 +25,18 @@ jobs:
       - name: Install Playwright + Chromium
         run: npx playwright install chromium --with-deps
 
-      - name: Run scraper
+      - name: Run scraper Top 14 (LNR)
         run: node scripts/scrape-lnr.js
+
+      - name: Run scraper Champions Cup & Challenge Cup (EPCR)
+        run: node scripts/scrape-epcr.js
 
       - name: Commit fixtures si changement
         run: |
           git config user.name "CalVirage Bot"
           git config user.email "bot@calvirage.fr"
           git add data/fixtures.json
-          git diff --staged --quiet || git commit -m "chore: mise à jour fixtures Top 14 $(date +%Y-%m-%d)"
+          git diff --staged --quiet || git commit -m "chore: mise à jour fixtures $(date +%Y-%m-%d)"
 
       - name: Push
         uses: ad-m/github-push-action@v0.8.0

@@ -156,7 +156,7 @@ export default function Home({ teams }) {
             <div className="flex items-start justify-between mb-6">
               <div>
                 <h2 className="text-lg font-black text-[#111]">Choisissez vos équipes</h2>
-                <p className="text-sm text-[#999] mt-0.5">Top 14</p>
+                <p className="text-sm text-[#999] mt-0.5">Top 14 · Champions Cup · Challenge Cup</p>
               </div>
               <button
                 onClick={toggleAll}
@@ -295,7 +295,7 @@ export default function Home({ teams }) {
         <footer className="border-t border-[#E8E8E6] bg-white mt-16">
           <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
             <span className="text-sm font-black text-[#111]">CalVirage</span>
-            <span className="text-xs text-[#BBB]">Top 14</span>
+            <span className="text-xs text-[#BBB]">Top 14 · Champions Cup · Challenge Cup</span>
           </div>
         </footer>
       </div>
