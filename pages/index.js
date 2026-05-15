@@ -214,22 +214,31 @@ export default function Home({ teams, weekendMatches }) {
             </button>
           </div>
 
-          {/* Cette semaine */}
-          {weekendMatches && weekendMatches.length > 0 && (
-            <div className="bg-white rounded-3xl border border-[#E8E8E6] p-6 md:p-8 mt-6">
-              <h2 className="text-base font-black text-[#111] mb-4">Cette semaine 🏉</h2>
-              {weekendMatches.map(group => (
-                <div key={group.date}>
-                  <div className="text-[10px] font-black text-[#AAA] uppercase tracking-widest mb-1 mt-3 first:mt-0">
-                    {formatDate(group.date)}
+          {/* Cette semaine — uniquement si des équipes sont sélectionnées */}
+          {selected.size > 0 && weekendMatches && (() => {
+            const filtered = weekendMatches
+              .map(group => ({
+                ...group,
+                matches: group.matches.filter(m => selected.has(m.home) || selected.has(m.away)),
+              }))
+              .filter(group => group.matches.length > 0);
+            if (filtered.length === 0) return null;
+            return (
+              <div className="bg-white rounded-3xl border border-[#E8E8E6] p-6 md:p-8 mt-6">
+                <h2 className="text-base font-black text-[#111] mb-4">Cette semaine 🏉</h2>
+                {filtered.map(group => (
+                  <div key={group.date}>
+                    <div className="text-[10px] font-black text-[#AAA] uppercase tracking-widest mb-1 mt-3 first:mt-0">
+                      {formatDate(group.date)}
+                    </div>
+                    {group.matches.map(m => (
+                      <MatchRow key={m.id} match={m} highlightId={selected.size === 1 ? Array.from(selected)[0] : null} />
+                    ))}
                   </div>
-                  {group.matches.map(m => (
-                    <MatchRow key={m.id} match={m} />
-                  ))}
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            );
+          })()}
 
           {/* Result */}
           {result && (
