@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import path from 'path';
+import fs from 'fs';
 import { TOP14_TEAMS } from '../lib/rugby';
-import { MatchRow } from '../lib/MatchRow';
+import { MatchRow, formatDate } from '../lib/MatchRow';
 
 function TeamCard({ team, selected, onToggle }) {
   const [imgError, setImgError] = useState(false);
@@ -48,7 +50,7 @@ function TeamCard({ team, selected, onToggle }) {
   );
 }
 
-export default function Home({ teams }) {
+export default function Home({ teams, weekendMatches }) {
   const [selected, setSelected] = useState(new Set());
   const [result, setResult] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -148,19 +150,39 @@ export default function Home({ teams }) {
             <button className="flex items-center gap-2 px-4 py-2 bg-[#111] text-white rounded-full text-sm font-bold">
               <span>🏉</span> Rugby
             </button>
-            {[{ label: 'Formule 1', emoji: '🏎' }, { label: 'Football', emoji: '⚽' }].map(s => (
-              <button
-                key={s.label}
-                disabled
-                className="relative flex items-center gap-2 px-4 py-2 bg-white border border-[#E8E8E6] rounded-full text-sm font-bold text-[#CCC] cursor-not-allowed"
-              >
-                <span>{s.emoji}</span> {s.label}
-                <span className="absolute -top-2 -right-1 bg-[#777] text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wide">
-                  Bientôt
-                </span>
-              </button>
-            ))}
+            <Link
+              href="/f1"
+              className="relative flex items-center gap-2 px-4 py-2 bg-white border border-[#E8E8E6] rounded-full text-sm font-bold text-[#444] hover:border-[#CBCBC9] transition-colors"
+            >
+              <span>🏎</span> Formule 1
+            </Link>
+            <button
+              disabled
+              className="relative flex items-center gap-2 px-4 py-2 bg-white border border-[#E8E8E6] rounded-full text-sm font-bold text-[#CCC] cursor-not-allowed"
+            >
+              <span>⚽</span> Football
+              <span className="absolute -top-2 -right-1 bg-[#777] text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+                Bientôt
+              </span>
+            </button>
           </div>
+
+          {/* Cette semaine */}
+          {weekendMatches && weekendMatches.length > 0 && (
+            <div className="bg-white rounded-3xl border border-[#E8E8E6] p-6 md:p-8 mb-6">
+              <h2 className="text-base font-black text-[#111] mb-4">Cette semaine 🏉</h2>
+              {weekendMatches.map(group => (
+                <div key={group.date}>
+                  <div className="text-[10px] font-black text-[#AAA] uppercase tracking-widest mb-1 mt-3 first:mt-0">
+                    {formatDate(group.date)}
+                  </div>
+                  {group.matches.map(m => (
+                    <MatchRow key={m.id} match={m} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Team selector card */}
           <div className="bg-white rounded-3xl border border-[#E8E8E6] p-6 md:p-8 mb-6">
@@ -288,8 +310,38 @@ export default function Home({ teams }) {
 }
 
 export async function getStaticProps() {
+  let weekendMatches = [];
+  try {
+    const filePath = path.join(process.cwd(), 'data', 'fixtures.json');
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    const allMatches = JSON.parse(raw).matches || [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const in14Days = new Date(today);
+    in14Days.setDate(in14Days.getDate() + 14);
+
+    const todayStr = today.toISOString().slice(0, 10);
+    const in14Str = in14Days.toISOString().slice(0, 10);
+
+    const upcoming = allMatches.filter(m => m.date >= todayStr && m.date <= in14Str);
+
+    // Group by date
+    const byDate = {};
+    for (const m of upcoming) {
+      if (!byDate[m.date]) byDate[m.date] = [];
+      byDate[m.date].push(m);
+    }
+
+    // Sort dates and take first 3
+    weekendMatches = Object.keys(byDate)
+      .sort()
+      .slice(0, 3)
+      .map(date => ({ date, matches: byDate[date] }));
+  } catch {}
+
   return {
-    props: { teams: TOP14_TEAMS },
+    props: { teams: TOP14_TEAMS, weekendMatches },
     revalidate: 3600,
   };
 }

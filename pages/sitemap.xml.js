@@ -15,6 +15,11 @@ function sitemap(teams) {
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>${BASE}/f1</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
 ${teams.map(t => `  <url>
     <loc>${BASE}/${t.id}</loc>
     <changefreq>weekly</changefreq>

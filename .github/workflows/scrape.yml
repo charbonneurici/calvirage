@@ -29,6 +29,9 @@ jobs:
       - name: Run scraper Top 14 (LNR)
         run: node scripts/scrape-lnr.js
 
+      - name: Run scraper F1
+        run: node scripts/scrape-f1.js
+
       - name: Run scraper Champions Cup & Challenge Cup (EPCR)
         run: node scripts/scrape-epcr.js
 
