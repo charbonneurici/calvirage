@@ -73,6 +73,17 @@ export default function handler(req, res) {
     if (f.venue) lines.push(`LOCATION:${esc(f.venue)}`);
     lines.push(`DESCRIPTION:${esc(f.comp)} — J${f.round || ''}`);
     lines.push('STATUS:CONFIRMED');
+    // Alerte la veille à 18h
+    const matchDate = new Date(`${f.date}T${(f.time || '15:00')}:00`);
+    const eve = new Date(matchDate);
+    eve.setDate(eve.getDate() - 1);
+    eve.setHours(18, 0, 0, 0);
+    const eveDt = `${eve.getFullYear()}${pad(eve.getMonth()+1)}${pad(eve.getDate())}T180000`;
+    lines.push('BEGIN:VALARM');
+    lines.push('ACTION:DISPLAY');
+    lines.push(`TRIGGER;VALUE=DATE-TIME:${eveDt}`);
+    lines.push(`DESCRIPTION:🏉 Match demain — ${isTbd ? esc(f.comp) : `${esc(f.homeName || f.home)} vs ${esc(f.awayName || f.away)}`}`);
+    lines.push('END:VALARM');
     lines.push('END:VEVENT');
   });
 
