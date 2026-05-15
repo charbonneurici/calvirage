@@ -167,23 +167,6 @@ export default function Home({ teams, weekendMatches }) {
             </button>
           </div>
 
-          {/* Cette semaine */}
-          {weekendMatches && weekendMatches.length > 0 && (
-            <div className="bg-white rounded-3xl border border-[#E8E8E6] p-6 md:p-8 mb-6">
-              <h2 className="text-base font-black text-[#111] mb-4">Cette semaine 🏉</h2>
-              {weekendMatches.map(group => (
-                <div key={group.date}>
-                  <div className="text-[10px] font-black text-[#AAA] uppercase tracking-widest mb-1 mt-3 first:mt-0">
-                    {formatDate(group.date)}
-                  </div>
-                  {group.matches.map(m => (
-                    <MatchRow key={m.id} match={m} />
-                  ))}
-                </div>
-              ))}
-            </div>
-          )}
-
           {/* Team selector card */}
           <div className="bg-white rounded-3xl border border-[#E8E8E6] p-6 md:p-8 mb-6">
             <div className="flex items-start justify-between mb-6">
@@ -230,6 +213,23 @@ export default function Home({ teams, weekendMatches }) {
               Créer mon calendrier →
             </button>
           </div>
+
+          {/* Cette semaine */}
+          {weekendMatches && weekendMatches.length > 0 && (
+            <div className="bg-white rounded-3xl border border-[#E8E8E6] p-6 md:p-8 mt-6">
+              <h2 className="text-base font-black text-[#111] mb-4">Cette semaine 🏉</h2>
+              {weekendMatches.map(group => (
+                <div key={group.date}>
+                  <div className="text-[10px] font-black text-[#AAA] uppercase tracking-widest mb-1 mt-3 first:mt-0">
+                    {formatDate(group.date)}
+                  </div>
+                  {group.matches.map(m => (
+                    <MatchRow key={m.id} match={m} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Result */}
           {result && (
