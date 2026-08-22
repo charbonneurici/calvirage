@@ -1,4 +1,4 @@
-name: Scraper Top 14 + Champions Cup + Challenge Cup
+name: Scraper Top 14 + Coupes d'Europe + XV de France
 
 on:
   schedule:
@@ -29,11 +29,11 @@ jobs:
       - name: Run scraper Top 14 (LNR)
         run: node scripts/scrape-lnr.js
 
-      - name: Run scraper F1
-        run: node scripts/scrape-f1.js
-
       - name: Run scraper Champions Cup & Challenge Cup (EPCR)
         run: node scripts/scrape-epcr.js
+
+      - name: Run scraper XV de France
+        run: node scripts/scrape-france.js
 
       - name: Commit fixtures si changement
         run: |

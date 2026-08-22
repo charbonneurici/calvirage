@@ -3,7 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import path from 'path';
 import fs from 'fs';
-import { TOP14_TEAMS } from '../lib/rugby';
+import { RUGBY_TEAMS, teamOf } from '../lib/rugby';
+import { todayISO } from '../lib/dates';
 import { MatchRow } from '../lib/MatchRow';
 
 function TeamLogo({ team }) {
@@ -25,6 +26,7 @@ function TeamLogo({ team }) {
 
 
 export default function TeamPage({ team, upcoming, past, calUrl }) {
+  const of = teamOf(team);
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -39,9 +41,9 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
     <>
       <Head>
         <title>{team.name} — CalVirage</title>
-        <meta name="description" content={`Tous les matchs de ${team.name} dans votre calendrier. Mis à jour automatiquement.`} />
+        <meta name="description" content={`Tous les matchs ${of} dans votre calendrier. Mis à jour automatiquement.`} />
         <meta property="og:title" content={`${team.name} sur CalVirage`} />
-        <meta property="og:description" content={`Abonne-toi au calendrier de ${team.name} — mis à jour automatiquement.`} />
+        <meta property="og:description" content={`Abonne-toi au calendrier ${of} — mis à jour automatiquement.`} />
         <meta property="og:image" content={`https://calvirage.vercel.app/api/og?team=${team.id}`} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -92,7 +94,7 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
               <span className="text-sm font-bold text-emerald-600">Mis à jour automatiquement</span>
             </div>
             <p className="text-sm text-[#777] mb-4">
-              Abonne-toi au calendrier de {team.name}. Tous les matchs apparaissent dans ton agenda, mis à jour à chaque changement.
+              Abonne-toi au calendrier {of}. Tous les matchs apparaissent dans ton agenda, mis à jour à chaque changement.
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
               <a
@@ -138,21 +140,21 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
             <p className="text-xs font-black text-[#111] uppercase tracking-wide mb-3">Partager cette page</p>
             <div className="flex flex-wrap gap-2">
               <a
-                href={`https://wa.me/?text=${encodeURIComponent(`Les matchs de ${team.name} dans mon calendrier 🏉 https://calvirage.vercel.app/${team.id}`)}`}
+                href={`https://wa.me/?text=${encodeURIComponent(`Les matchs ${of} dans mon calendrier 🏉 https://calvirage.vercel.app/${team.id}`)}`}
                 target="_blank" rel="noreferrer"
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#25D366] text-white text-xs font-bold hover:opacity-90 transition-opacity"
               >
                 <span>💬</span> WhatsApp
               </a>
               <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Les matchs de ${team.name} dans mon calendrier 🏉`)}&url=${encodeURIComponent(`https://calvirage.vercel.app/${team.id}`)}`}
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Les matchs ${of} dans mon calendrier 🏉`)}&url=${encodeURIComponent(`https://calvirage.vercel.app/${team.id}`)}`}
                 target="_blank" rel="noreferrer"
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#000] text-white text-xs font-bold hover:opacity-80 transition-opacity"
               >
                 <span>𝕏</span> Twitter
               </a>
               <a
-                href={`https://t.me/share/url?url=${encodeURIComponent(`https://calvirage.vercel.app/${team.id}`)}&text=${encodeURIComponent(`Les matchs de ${team.name} dans ton calendrier 🏉`)}`}
+                href={`https://t.me/share/url?url=${encodeURIComponent(`https://calvirage.vercel.app/${team.id}`)}&text=${encodeURIComponent(`Les matchs ${of} dans ton calendrier 🏉`)}`}
                 target="_blank" rel="noreferrer"
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#0088cc] text-white text-xs font-bold hover:opacity-90 transition-opacity"
               >
@@ -182,7 +184,7 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
 }
 
 export async function getStaticProps({ params }) {
-  const team = TOP14_TEAMS.find(t => t.id === params.team);
+  const team = RUGBY_TEAMS.find(t => t.id === params.team);
   if (!team) return { notFound: true };
 
   let matches = [];
@@ -192,7 +194,7 @@ export async function getStaticProps({ params }) {
     matches = JSON.parse(raw).matches || [];
   } catch {}
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayISO();
   const teamMatches = matches.filter(m => m.home === team.id || m.away === team.id);
   const upcoming = teamMatches.filter(m => m.date >= today);
   const past = teamMatches.filter(m => m.date < today).slice(-3);
@@ -208,7 +210,7 @@ export async function getStaticProps({ params }) {
 
 export async function getStaticPaths() {
   return {
-    paths: TOP14_TEAMS.map(t => ({ params: { team: t.id } })),
+    paths: RUGBY_TEAMS.map(t => ({ params: { team: t.id } })),
     fallback: false,
   };
 }

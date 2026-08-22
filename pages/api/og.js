@@ -1,23 +1,9 @@
 import { ImageResponse } from '@vercel/og';
+import { RUGBY_TEAMS } from '../../lib/rugby';
 
 export const config = { runtime: 'edge' };
 
-const TEAMS = {
-  toulouse:      { name: 'Toulouse',       color: '#C8102E', text: '#fff', abbrev: 'TLS' },
-  larochelle:    { name: 'La Rochelle',    color: '#FFCD00', text: '#111', abbrev: 'LRO' },
-  bordeaux:      { name: 'Bordeaux',       color: '#1A1A2E', text: '#fff', abbrev: 'UBB' },
-  toulon:        { name: 'Toulon',         color: '#002D72', text: '#fff', abbrev: 'RCT' },
-  racing92:      { name: 'Racing 92',      color: '#6CACE4', text: '#fff', abbrev: 'R92' },
-  stadefrancais: { name: 'Stade Français', color: '#E8417A', text: '#fff', abbrev: 'SFP' },
-  clermont:      { name: 'Clermont',       color: '#FFD100', text: '#111', abbrev: 'ASM' },
-  lyon:          { name: 'Lyon',           color: '#C8102E', text: '#fff', abbrev: 'LOU' },
-  castres:       { name: 'Castres',        color: '#003A8C', text: '#fff', abbrev: 'CO'  },
-  pau:           { name: 'Pau',            color: '#007A53', text: '#fff', abbrev: 'PAU' },
-  bayonne:       { name: 'Bayonne',        color: '#003087', text: '#fff', abbrev: 'BAY' },
-  perpignan:     { name: 'Perpignan',      color: '#8B1A2A', text: '#fff', abbrev: 'PER' },
-  montpellier:   { name: 'Montpellier',    color: '#002147', text: '#fff', abbrev: 'MHR' },
-  montauban:     { name: 'Montauban',      color: '#1B3A6B', text: '#fff', abbrev: 'MTB' },
-};
+const TEAMS = Object.fromEntries(RUGBY_TEAMS.map(t => [t.id, t]));
 
 export default function handler(req) {
   const { searchParams } = new URL(req.url);

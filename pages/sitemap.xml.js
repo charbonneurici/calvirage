@@ -1,4 +1,4 @@
-import { TOP14_TEAMS } from '../lib/rugby';
+import { RUGBY_TEAMS } from '../lib/rugby';
 
 const BASE = 'https://calvirage.vercel.app';
 
@@ -15,11 +15,6 @@ function sitemap(teams) {
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <url>
-    <loc>${BASE}/f1</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
 ${teams.map(t => `  <url>
     <loc>${BASE}/${t.id}</loc>
     <changefreq>weekly</changefreq>
@@ -33,7 +28,7 @@ export default function Sitemap() { return null; }
 export async function getServerSideProps({ res }) {
   res.setHeader('Content-Type', 'text/xml; charset=utf-8');
   res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate');
-  res.write(sitemap(TOP14_TEAMS));
+  res.write(sitemap(RUGBY_TEAMS));
   res.end();
   return { props: {} };
 }

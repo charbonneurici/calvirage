@@ -3,7 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import path from 'path';
 import fs from 'fs';
-import { TOP14_TEAMS } from '../lib/rugby';
+import { TOP14_TEAMS, FRANCE_TEAM } from '../lib/rugby';
+import { todayISO } from '../lib/dates';
 import { MatchRow, formatDate } from '../lib/MatchRow';
 
 function TeamCard({ team, selected, onToggle }) {
@@ -50,7 +51,7 @@ function TeamCard({ team, selected, onToggle }) {
   );
 }
 
-export default function Home({ teams, weekendMatches }) {
+export default function Home({ teams, franceTeam, weekendMatches }) {
   const [selected, setSelected] = useState(new Set());
   const [result, setResult] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -65,8 +66,10 @@ export default function Home({ teams, weekendMatches }) {
     setResult(null);
   };
 
+  const allIds = [...teams.map(t => t.id), franceTeam.id];
+
   const toggleAll = () => {
-    setSelected(prev => prev.size === teams.length ? new Set() : new Set(teams.map(t => t.id)));
+    setSelected(prev => prev.size === allIds.length ? new Set() : new Set(allIds));
     setResult(null);
   };
 
@@ -99,7 +102,7 @@ export default function Home({ teams, weekendMatches }) {
         <title>CalVirage — Les vrais fans s&apos;organisent</title>
         <meta name="description" content="Créez votre calendrier sportif personnalisé. Ne ratez plus un seul match de vos équipes." />
         <meta property="og:title" content="CalVirage — Les vrais fans s'organisent" />
-        <meta property="og:description" content="Abonne-toi aux matchs de tes équipes — Top 14, Champions Cup, Challenge Cup. Mis à jour automatiquement dans ton calendrier." />
+        <meta property="og:description" content="Abonne-toi aux matchs de tes équipes — Top 14, Champions Cup, Challenge Cup, XV de France. Mis à jour automatiquement dans ton calendrier." />
         <meta property="og:image" content="https://calvirage.vercel.app/api/og" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -150,12 +153,6 @@ export default function Home({ teams, weekendMatches }) {
             <button className="flex items-center gap-2 px-4 py-2 bg-[#111] text-white rounded-full text-sm font-bold">
               <span>🏉</span> Rugby
             </button>
-            <Link
-              href="/f1"
-              className="relative flex items-center gap-2 px-4 py-2 bg-white border border-[#E8E8E6] rounded-full text-sm font-bold text-[#444] hover:border-[#CBCBC9] transition-colors"
-            >
-              <span>🏎</span> Formule 1
-            </Link>
             <button
               disabled
               className="relative flex items-center gap-2 px-4 py-2 bg-white border border-[#E8E8E6] rounded-full text-sm font-bold text-[#CCC] cursor-not-allowed"
@@ -172,16 +169,29 @@ export default function Home({ teams, weekendMatches }) {
             <div className="flex items-start justify-between mb-6">
               <div>
                 <h2 className="text-lg font-black text-[#111]">Choisissez vos équipes</h2>
-                <p className="text-sm text-[#999] mt-0.5">Top 14 · Champions Cup · Challenge Cup</p>
+                <p className="text-sm text-[#999] mt-0.5">Top 14 · Champions Cup · Challenge Cup · 6 Nations</p>
               </div>
               <button
                 onClick={toggleAll}
                 className="text-xs font-bold text-[#999] hover:text-[#111] transition-colors underline underline-offset-2 whitespace-nowrap ml-4 mt-0.5"
               >
-                {selected.size === teams.length ? 'Tout décocher' : 'Tout sélectionner'}
+                {selected.size === allIds.length ? 'Tout décocher' : 'Tout sélectionner'}
               </button>
             </div>
 
+            {/* Sélection nationale */}
+            <div className="mb-6 pb-6 border-b border-[#F0EFEC]">
+              <p className="text-[10px] font-black text-[#AAA] uppercase tracking-widest mb-3">Sélection nationale</p>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-3">
+                <TeamCard
+                  team={franceTeam}
+                  selected={selected.has(franceTeam.id)}
+                  onToggle={toggle}
+                />
+              </div>
+            </div>
+
+            <p className="text-[10px] font-black text-[#AAA] uppercase tracking-widest mb-3">Clubs — Top 14</p>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-3">
               {teams.map(team => (
                 <TeamCard
@@ -309,7 +319,7 @@ export default function Home({ teams, weekendMatches }) {
                 Comment ça marche ?
               </Link>
               <span className="text-xs text-[#DDD]">·</span>
-              <span className="text-xs text-[#BBB]">Top 14 · Champions Cup · Challenge Cup</span>
+              <span className="text-xs text-[#BBB]">Top 14 · Champions Cup · Challenge Cup · XV de France</span>
             </div>
           </div>
         </footer>
@@ -325,13 +335,8 @@ export async function getStaticProps() {
     const raw = fs.readFileSync(filePath, 'utf-8');
     const allMatches = JSON.parse(raw).matches || [];
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const in14Days = new Date(today);
-    in14Days.setDate(in14Days.getDate() + 14);
-
-    const todayStr = today.toISOString().slice(0, 10);
-    const in14Str = in14Days.toISOString().slice(0, 10);
+    const todayStr = todayISO();
+    const in14Str = todayISO(14);
 
     const upcoming = allMatches.filter(m => m.date >= todayStr && m.date <= in14Str);
 
@@ -350,7 +355,7 @@ export async function getStaticProps() {
   } catch {}
 
   return {
-    props: { teams: TOP14_TEAMS, weekendMatches },
+    props: { teams: TOP14_TEAMS, franceTeam: FRANCE_TEAM, weekendMatches },
     revalidate: 3600,
   };
 }
