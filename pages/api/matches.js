@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import { todayISO } from '../../lib/dates';
 
 function loadFixtures() {
   try {
@@ -22,7 +23,7 @@ export default function handler(req, res) {
     return res.status(400).json({ error: 'Invalid teams' });
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayISO();
   const fixtures = loadFixtures();
 
   const hasTop14 = fixtures.some(f =>

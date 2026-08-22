@@ -3,15 +3,30 @@ import fs from 'fs';
 
 const pad = n => n.toString().padStart(2, '0');
 
+// Horaire pas encore fixé (null, "-", "à confirmer"…) → 15:00 par défaut.
+// Le flux étant rafraîchi toutes les 12h, l'heure réelle arrive dès sa publication.
+const DEFAULT_TIME = '15:00';
+function safeTime(timeStr) {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(timeStr || '') ? timeStr : DEFAULT_TIME;
+}
+
 function formatDt(dateStr, timeStr) {
-  const [h, m] = (timeStr || '15:00').split(':');
-  return `${dateStr.replace(/-/g, '')}T${(h||'15').padStart(2,'0')}${(m||'00').padStart(2,'0')}00`;
+  const [h, m] = safeTime(timeStr).split(':');
+  return `${dateStr.replace(/-/g, '')}T${h}${m}00`;
 }
 
 function addHours(dateStr, timeStr, hours) {
-  const dt = new Date(`${dateStr}T${timeStr || '15:00'}:00`);
+  const dt = new Date(`${dateStr}T${safeTime(timeStr)}:00`);
   dt.setTime(dt.getTime() + hours * 3600 * 1000);
   return `${dt.getFullYear()}${pad(dt.getMonth()+1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;
+}
+
+// Le round vaut un numéro (Top 14), un libellé (EPCR, phases finales) ou rien (sélections).
+// On l'omet quand la compétition le répète déjà ("Top 14 — Finale" + round "finale").
+function roundLabel(round, comp) {
+  if (round === null || round === undefined || round === '') return '';
+  if (typeof round === 'number') return ` — J${round}`;
+  return comp?.toLowerCase().endsWith(round.toLowerCase()) ? '' : ` — ${round}`;
 }
 
 function esc(str) {
@@ -71,10 +86,10 @@ export default function handler(req, res) {
     lines.push(`DTSTART;TZID=Europe/Paris:${formatDt(f.date, f.time)}`);
     lines.push(`DTEND;TZID=Europe/Paris:${addHours(f.date, f.time, 2)}`);
     if (f.venue) lines.push(`LOCATION:${esc(f.venue)}`);
-    lines.push(`DESCRIPTION:${esc(f.comp)} — J${f.round || ''}`);
+    lines.push(`DESCRIPTION:${esc(f.comp)}${roundLabel(f.round, f.comp)}`);
     lines.push('STATUS:CONFIRMED');
     // Alerte la veille à 18h
-    const matchDate = new Date(`${f.date}T${(f.time || '15:00')}:00`);
+    const matchDate = new Date(`${f.date}T${safeTime(f.time)}:00`);
     const eve = new Date(matchDate);
     eve.setDate(eve.getDate() - 1);
     eve.setHours(18, 0, 0, 0);

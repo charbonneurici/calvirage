@@ -8,7 +8,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const SEASON = '2025-2026';
+const SEASON = '2026-2027';
 const TOTAL_ROUNDS = 26;
 const OUTPUT_FILE = path.join(__dirname, '..', 'data', 'fixtures.json');
 
@@ -36,7 +36,7 @@ const VENUES = {
   'bayonne':           'Stade Jean-Dauger, Bayonne',
   'perpignan':         'Stade Aimé-Giral, Perpignan',
   'montpellier':       'GGL Stadium, Montpellier',
-  'montauban':         'Stade Sapiac, Montauban',
+  'vannes':            'Stade de la Rabine, Vannes',
 };
 
 const CLUB_ID_MAP = {
@@ -58,7 +58,7 @@ const CLUB_ID_MAP = {
   'usa perpignan':             'perpignan',
   'montpellier hérault rugby': 'montpellier',
   'montpellier herault rugby': 'montpellier',
-  'us montauban':              'montauban',
+  'rc vannes':                 'vannes',
 };
 
 const FRENCH_MONTHS = {
@@ -99,18 +99,21 @@ function parseFrenchDate(text) {
   const day = m[1].padStart(2, '0');
   const month = FRENCH_MONTHS[m[2]];
   if (!month) return null;
-  const year = parseInt(month) >= 7 ? 2025 : 2026;
+  // Une saison court de juillet à juin : juillet→déc = 1re année, jan→juin = 2e
+  const [firstYear, secondYear] = SEASON.split('-');
+  const year = parseInt(month) >= 7 ? firstYear : secondYear;
   return `${year}-${month}-${day}`;
 }
 
+// La LNR affiche "-" tant que l'horaire n'est pas fixé (souvent au-delà de J5)
 function parseTime(t) {
-  if (!t) return '15:00';
-  return t.replace('h', ':').trim();
+  const cleaned = (t || '').replace('h', ':').trim();
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(cleaned) ? cleaned : null;
 }
 
 function venueFromLink(href) {
   if (!href) return null;
-  // /feuille-de-match/2025-2026/j1/11311-paris-montauban
+  // /feuille-de-match/2026-2027/j1/11311-paris-vannes
   const m = href.match(/\/j\d+\/\d+-(.+)$/);
   if (!m) return null;
   const parts = m[1].split('-');
@@ -185,11 +188,14 @@ async function main() {
   await page.setViewportSize({ width: 1280, height: 900 });
 
   console.log('📡 Chargement...');
+  // 'networkidle' n'est jamais atteint sur cette page (trackers persistants) :
+  // on attend le DOM puis explicitement le select des journées.
   await page.goto('https://top14.lnr.fr/calendrier-et-resultats', {
-    waitUntil: 'networkidle',
+    waitUntil: 'domcontentloaded',
     timeout: 45000,
   });
-  await page.waitForTimeout(3000);
+  await page.waitForSelector('#Journée', { timeout: 30000 });
+  await page.waitForTimeout(2000);
 
   // Récupérer les options disponibles
   const journeeOptions = await page.evaluate(() => {
@@ -320,7 +326,8 @@ async function main() {
 
       allMatches.push({
         id:       matchId ? `lnr-${matchId}` : `lnr-${playoff.roundKey}-${matchIndex}`,
-        round:    playoff.roundKey,
+        // La phase est déjà portée par `comp` ("Top 14 — Finale") : pas de round
+        round:    null,
         comp:     playoff.comp,
         home:     homeId,
         away:     awayId,
@@ -340,8 +347,6 @@ async function main() {
 
   await browser.close();
 
-  allMatches.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
-
   console.log(`\n✅ Total: ${allMatches.length} matchs`);
 
   if (allMatches.length === 0) {
@@ -349,11 +354,21 @@ async function main() {
     process.exit(1);
   }
 
+  // Fusion : on ne remplace que le Top 14, les autres compétitions sont préservées
+  let existing = { matches: [] };
+  try {
+    existing = JSON.parse(fs.readFileSync(OUTPUT_FILE, 'utf-8'));
+  } catch { /* premier run */ }
+
+  const others = (existing.matches || []).filter(m => !m.comp?.startsWith('Top 14'));
+  const merged = [...others, ...allMatches]
+    .sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''));
+
   fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify({
     updatedAt: new Date().toISOString(),
     season: SEASON,
-    matches: allMatches,
+    matches: merged,
   }, null, 2));
 
   console.log(`💾 Sauvegardé: ${OUTPUT_FILE}\n`);

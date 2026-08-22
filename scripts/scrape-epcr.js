@@ -29,10 +29,11 @@ const SLUG_MAP = {
   'usap':                      'perpignan',
   'usa-perpignan':             'perpignan',
   'montpellier-herault-rugby': 'montpellier',
-  'us-montauban':              'montauban',
+  'rc-vannes':                 'vannes',
 };
 
 const FRENCH_IDS = new Set(Object.values(SLUG_MAP));
+const EPCR_COMPS = new Set(['Champions Cup', 'Challenge Cup']);
 
 const MONTHS_EN = {
   jan:'01', feb:'02', mar:'03', apr:'04', may:'05', jun:'06',
@@ -46,6 +47,23 @@ function parseEpcrDate(str) {
   const day   = m[1].padStart(2, '0');
   const month = MONTHS_EN[m[2].toLowerCase().slice(0, 3)];
   return month ? `${m[3]}-${month}-${day}` : null;
+}
+
+// "Round 3" → 3 (rendu "J3" comme le Top 14) ; phases finales → libellé français
+const KO_LABELS = {
+  'round of 16':  '8es de finale',
+  'quarter-final': 'Quart de finale',
+  'quarter final': 'Quart de finale',
+  'semi-final':   'Demi-finale',
+  'semi final':   'Demi-finale',
+  'final':        'Finale',
+};
+
+function parseRound(raw) {
+  const label = raw.replace(/\s+/g, ' ').trim();
+  const poolRound = label.match(/^Round\s*(\d+)$/i);
+  if (poolRound) return parseInt(poolRound[1], 10);
+  return KO_LABELS[label.toLowerCase()] || label;
 }
 
 function slugToId(slug) {
@@ -94,24 +112,15 @@ async function scrapeMatch({ competition, id }) {
   // Texte brut pour date/heure/lieu/round
   const txt = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
 
-  // Date & heure : "Fri, 5 Dec 2025 - 20:00"
-  const dtMatch = txt.match(/(\w{3},\s*\d{1,2}\s+\w+\s+\d{4})\s*[-–]\s*(\d{2}:\d{2})/);
-  const date    = dtMatch ? parseEpcrDate(dtMatch[1]) : null;
-  const time    = dtMatch?.[2] || '15:00';
+  // Bandeau du match : "Round 1 Fri, 16 Oct 2026 - 19:00 Kingsholm Stadium Attendance: -"
+  const header = txt.match(
+    /(Round of 16|Quarter[- ]?Final|Semi[- ]?Final|Final|Round\s*\d+)\s+(\w{3},\s*\d{1,2}\s+\w+\s+\d{4})\s*[-–]\s*(\d{2}:\d{2})\s+(.+?)\s+Attendance/i
+  );
 
-  // Round : Pool X Round Y  ou  knockout
-  let round;
-  const prMatch = txt.match(/Pool\s*(\d)\s*Round\s*(\d+)/i);
-  if (prMatch) {
-    round = `Pool ${prMatch[1]} R${prMatch[2]}`;
-  } else {
-    const koMatch = txt.match(/(Round of 16|Quarter[- ]?Final[s]?|Semi[- ]?Final[s]?|The Final)/i);
-    round = koMatch?.[1] || 'Knockout';
-  }
-
-  // Stade : texte entre l'heure et "Attendance"
-  const venueMatch = txt.match(/\d{2}:\d{2}\s+([A-Z][^0-9]{4,80?}?)\s+Attendance/);
-  const venue = venueMatch?.[1]?.trim() || null;
+  const round = header ? parseRound(header[1]) : null;
+  const date  = header ? parseEpcrDate(header[2]) : null;
+  const time  = header?.[3] || null;
+  const venue = header?.[4]?.trim() || null;
 
   const comp = competition === 'champions-cup' ? 'Champions Cup' : 'Challenge Cup';
 
@@ -123,14 +132,13 @@ async function scrapeMatch({ competition, id }) {
 async function main() {
   console.log('\n🏆 Scraper CalVirage — Champions Cup & Challenge Cup\n');
 
-  // Charger les fixtures existantes (Top 14 + phases finales)
-  let existing = [];
+  // Charger les fixtures existantes : on ne remplace que les coupes d'Europe
+  let existing = { matches: [] };
   try {
-    const raw = fs.readFileSync(OUTPUT_FILE, 'utf-8');
-    existing  = JSON.parse(raw).matches || [];
-  } catch {}
-  const top14 = existing.filter(m => m.comp?.startsWith('Top 14'));
-  console.log(`📂 ${top14.length} matchs Top 14 conservés\n`);
+    existing = JSON.parse(fs.readFileSync(OUTPUT_FILE, 'utf-8'));
+  } catch { /* premier run */ }
+  const others = (existing.matches || []).filter(m => !EPCR_COMPS.has(m.comp));
+  console.log(`📂 ${others.length} matchs des autres compétitions conservés\n`);
 
   // Sitemap
   console.log('📡 Chargement du sitemap...');
@@ -184,13 +192,18 @@ async function main() {
 
   console.log(`\n✅ ${epcrMatches.length} matchs EPCR avec clubs français`);
 
-  const all = [...top14, ...epcrMatches]
+  if (epcrMatches.length === 0) {
+    console.error('\n❌ Aucun match EPCR extrait — on ne touche pas au fichier.');
+    process.exit(1);
+  }
+
+  const all = [...others, ...epcrMatches]
     .sort((a, b) => (a.date || '').localeCompare(b.date || '') || (a.time || '').localeCompare(b.time || ''));
 
   fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify({
+    ...existing,
     updatedAt: new Date().toISOString(),
-    season:    '2025-2026',
     matches:   all,
   }, null, 2));
 
