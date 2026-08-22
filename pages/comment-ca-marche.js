@@ -5,13 +5,13 @@ const steps = [
   {
     num: '1',
     title: 'Choisis tes équipes',
-    desc: "Sélectionne une ou plusieurs équipes parmi les 14 clubs du Top 14. Tu peux aussi mélanger rugby, et bientôt d'autres sports.",
+    desc: "Le XV de France, un club du Top 14, ou les deux — autant d'équipes que tu veux. Tout arrive dans le même calendrier.",
     emoji: '🏉',
   },
   {
     num: '2',
     title: 'Génère ton lien de calendrier',
-    desc: 'Clique sur "Créer mon calendrier". Tu obtiens un lien unique au format .ics, compatible avec tous les agendas.',
+    desc: 'Clique sur "Créer mon calendrier". Tu obtiens un lien unique au format iCalendar, compatible avec tous les agendas.',
     emoji: '🔗',
   },
   {
@@ -23,7 +23,7 @@ const steps = [
   {
     num: '4',
     title: 'Profite',
-    desc: "Tous les matchs apparaissent dans ton agenda habituel, avec le nom des équipes et l'heure. Plus jamais un match loupé.",
+    desc: "Tous les matchs apparaissent dans ton agenda habituel, avec les équipes, l'heure et le stade — plus un rappel la veille à 18h.",
     emoji: '✅',
   },
 ];
@@ -72,7 +72,7 @@ const faq = [
   },
   {
     q: 'Quels matchs sont inclus ?',
-    a: 'Tous les matchs de Top 14, Champions Cup et Challenge Cup pour les équipes que tu suis. Les phases finales (barrages, demi-finales, finale) sont incluses dès que les équipes qualifiées sont connues.',
+    a: "Pour un club : Top 14, Champions Cup et Challenge Cup, phases finales comprises (elles apparaissent dès que les qualifiés sont connus). Pour le XV de France : Tournoi des 6 Nations, Nations Championship et Coupe du monde.",
   },
   {
     q: 'Et si un match est reporté ou annulé ?',
@@ -81,6 +81,14 @@ const faq = [
   {
     q: "Pourquoi un abonnement plutôt qu'un fichier .ics à télécharger ?",
     a: "Un fichier .ics est statique : si les horaires changent, ton agenda ne le sait pas. Un abonnement est dynamique : il se synchronise automatiquement.",
+  },
+  {
+    q: "L'horaire de certains matchs affiche « horaire à venir »",
+    a: "La Ligue ne fixe les coups d'envoi que quelques semaines à l'avance. En attendant, le match est placé à 15h dans ton agenda et se recale tout seul dès que l'horaire officiel tombe.",
+  },
+  {
+    q: 'Est-ce que je peux changer mes équipes plus tard ?',
+    a: "Oui : reviens sur le site, refais une sélection et abonne-toi au nouveau lien. Pense à supprimer l'ancien calendrier dans ton agenda pour éviter les doublons.",
   },
   {
     q: 'Ça marche sur iPhone / Android ?',
@@ -110,9 +118,9 @@ export default function HowItWorks() {
         <header className="bg-white border-b border-[#E8E8E6]">
           <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
             <Link href="/" className="text-sm font-black text-[#111] hover:text-[#E63329] transition-colors">
-              ← CalVirage
+              ← 🏉 CalVirage
             </Link>
-            <span className="text-xs text-[#AAA]">Les vrais fans s&apos;organisent</span>
+            <span className="text-xs text-[#AAA]">Top 14 · Coupes d&apos;Europe · XV de France</span>
           </div>
         </header>
 
@@ -124,7 +132,7 @@ export default function HowItWorks() {
               Comment ça marche ?
             </h1>
             <p className="text-base text-[#777]">
-              En 2 minutes, tous les matchs de tes équipes apparaissent dans ton agenda — et se mettent à jour tout seuls.
+              En 2 minutes, tous les matchs de tes équipes de rugby apparaissent dans ton agenda — et s'y mettent à jour tout seuls.
             </p>
           </div>
 

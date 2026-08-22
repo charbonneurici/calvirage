@@ -61,7 +61,7 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
         <header className="bg-white border-b border-[#E8E8E6]">
           <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
             <Link href="/" className="text-sm font-black text-[#111] hover:text-[#E63329] transition-colors">
-              ← CalVirage
+              ← 🏉 CalVirage
             </Link>
             <Link href="/comment-ca-marche" className="text-sm font-bold text-[#777] hover:text-[#111] transition-colors">
               Comment ça marche ?
@@ -89,38 +89,47 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
 
           {/* Subscribe CTA */}
           <div className="bg-white rounded-3xl border border-[#E8E8E6] p-6 mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
-              <span className="text-sm font-bold text-emerald-600">Mis à jour automatiquement</span>
-            </div>
-            <p className="text-sm text-[#777] mb-4">
-              Abonne-toi au calendrier {of}. Tous les matchs apparaissent dans ton agenda, mis à jour à chaque changement.
+            <h2 className="text-lg font-black text-[#111] mb-1">Ajoute-les à ton agenda</h2>
+            <p className="text-sm text-[#999] mb-5">
+              Une seule fois. Ensuite le calendrier {of} se met à jour tout seul — horaires décalés,
+              matchs reportés et phases finales compris.
             </p>
-            <div className="flex flex-col sm:flex-row gap-2">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
               <a
                 href={webcalUrl}
-                className="flex-1 py-3 px-4 rounded-xl font-black text-sm text-center text-white transition-all hover:opacity-90 active:scale-95"
+                className="flex items-center justify-center gap-2 py-4 px-4 rounded-2xl font-black text-sm text-white transition-all hover:opacity-90 active:scale-[0.98]"
                 style={{ backgroundColor: team.color }}
               >
-                + Apple Calendar
+                <span aria-hidden="true">🍎</span> Apple Calendar
               </a>
               <a
                 href={`https://www.google.com/calendar/render?cid=${encodeURIComponent(calUrl)}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex-1 py-3 px-4 rounded-xl font-bold text-sm bg-[#F7F6F3] text-[#111] hover:bg-[#EEECEA] transition-all text-center"
+                className="flex items-center justify-center gap-2 py-4 px-4 rounded-2xl font-black text-sm bg-[#111] text-white hover:bg-[#333] transition-all active:scale-[0.98]"
               >
-                + Google Calendar
+                <span aria-hidden="true">🗓</span> Google Calendar
               </a>
+            </div>
+
+            <div className="flex items-center gap-2 bg-[#F7F6F3] rounded-xl p-1.5 pl-4">
+              <code className="text-[11px] text-[#999] truncate flex-1 min-w-0">{calUrl}</code>
               <button
                 onClick={copy}
-                className={`py-3 px-4 rounded-xl font-bold text-sm transition-all ${
-                  copied ? 'bg-emerald-500 text-white' : 'bg-[#F7F6F3] text-[#111] hover:bg-[#EEECEA]'
+                className={`shrink-0 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+                  copied ? 'bg-emerald-500 text-white' : 'bg-white text-[#111] hover:bg-[#EEECEA] border border-[#E8E8E6]'
                 }`}
               >
-                {copied ? '✓ Copié !' : 'Copier le lien'}
+                {copied ? '✓ Copié' : 'Copier'}
               </button>
             </div>
+            <p className="text-[11px] text-[#BBB] mt-2">
+              Outlook, Thunderbird, Fantastical : colle ce lien dans les calendriers Internet de ton app.{' '}
+              <Link href="/comment-ca-marche" className="font-bold text-[#999] hover:text-[#111] underline underline-offset-2">
+                Guide détaillé
+              </Link>
+            </p>
           </div>
 
           {/* Upcoming matches */}
@@ -174,7 +183,7 @@ export default function TeamPage({ team, upcoming, past, calUrl }) {
         <footer className="border-t border-[#E8E8E6] bg-white mt-8">
           <div className="max-w-2xl mx-auto px-6 py-4 text-center">
             <Link href="/" className="text-xs text-[#BBB] hover:text-[#111] transition-colors">
-              ← Retour à CalVirage — choisir d&apos;autres équipes
+              ← Ajouter d&apos;autres équipes à mon calendrier
             </Link>
           </div>
         </footer>
