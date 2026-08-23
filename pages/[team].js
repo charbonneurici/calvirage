@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import path from 'path';
-import fs from 'fs';
 import { RUGBY_TEAMS, teamOf } from '../lib/rugby';
+import { loadFixtures, filterForTeams } from '../lib/fixtures';
 import { todayISO } from '../lib/dates';
 import { MatchRow } from '../lib/MatchRow';
 
@@ -196,17 +195,11 @@ export async function getStaticProps({ params }) {
   const team = RUGBY_TEAMS.find(t => t.id === params.team);
   if (!team) return { notFound: true };
 
-  let matches = [];
-  try {
-    const filePath = path.join(process.cwd(), 'data', 'fixtures.json');
-    const raw = fs.readFileSync(filePath, 'utf-8');
-    matches = JSON.parse(raw).matches || [];
-  } catch {}
-
   const today = todayISO();
-  const teamMatches = matches.filter(m => m.home === team.id || m.away === team.id);
-  const upcoming = teamMatches.filter(m => m.date >= today);
-  const past = teamMatches.filter(m => m.date < today).slice(-3);
+  // filterForTeams rattache aussi les phases finales sans affiche connue
+  const teamMatches = filterForTeams(loadFixtures(), new Set([team.id]));
+  const upcoming = teamMatches.filter(m => (m.endDate || m.date) >= today);
+  const past = teamMatches.filter(m => (m.endDate || m.date) < today).slice(-3);
 
   const encoded = Buffer.from(team.id).toString('base64');
   const calUrl = `https://calvirage.vercel.app/api/cal?teams=${encoded}`;

@@ -6,18 +6,29 @@ on:
     - cron: '0 6 * * 4'  # Jeudi à 6h (matchs en semaine / reports)
   workflow_dispatch:       # Déclenchement manuel depuis GitHub
 
+# Rappel : GitHub désactive un cron après 60 jours sans commit sur le repo.
+# Le workflow se recommite lui-même à chaque mise à jour de fixtures, ce qui
+# suffit à garder le compteur à zéro tant que des matchs bougent.
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -26,24 +37,46 @@ jobs:
       - name: Install Playwright + Chromium
         run: npx playwright install chromium --with-deps
 
-      - name: Run scraper Top 14 (LNR)
+      # Chaque scraper ne remplace que ses propres compétitions et sort en
+      # erreur sans écrire s'il n'extrait rien : un échec isolé ne doit donc
+      # pas empêcher les autres de tourner. Le résultat de chacun est relevé
+      # plus bas pour que le job échoue quand même et qu'on soit alerté.
+      - name: Scraper Top 14 (LNR)
+        id: lnr
+        continue-on-error: true
         run: node scripts/scrape-lnr.js
 
-      - name: Run scraper Champions Cup & Challenge Cup (EPCR)
+      - name: Scraper Champions Cup & Challenge Cup (EPCR)
+        id: epcr
+        continue-on-error: true
         run: node scripts/scrape-epcr.js
 
-      - name: Run scraper XV de France
+      - name: Scraper XV de France
+        id: france
+        continue-on-error: true
         run: node scripts/scrape-france.js
 
-      - name: Commit fixtures si changement
+      - name: Commit et push si changement
         run: |
           git config user.name "CalVirage Bot"
           git config user.email "bot@calvirage.fr"
           git add data/fixtures.json
-          git diff --staged --quiet || git commit -m "chore: mise à jour fixtures $(date +%Y-%m-%d)"
+          if git diff --staged --quiet; then
+            echo "Aucun changement de fixtures."
+          else
+            git commit -m "chore: mise à jour fixtures $(date +%Y-%m-%d)"
+            git push
+            echo "Fixtures mises à jour et poussées."
+          fi
 
-      - name: Push
-        uses: ad-m/github-push-action@v0.8.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+      - name: Vérifier que les trois scrapers ont réussi
+        run: |
+          echo "LNR:    ${{ steps.lnr.outcome }}"
+          echo "EPCR:   ${{ steps.epcr.outcome }}"
+          echo "France: ${{ steps.france.outcome }}"
+          if [ "${{ steps.lnr.outcome }}" != "success" ] \
+          || [ "${{ steps.epcr.outcome }}" != "success" ] \
+          || [ "${{ steps.france.outcome }}" != "success" ]; then
+            echo "::error::Au moins un scraper a échoué — les données de sa compétition sont figées."
+            exit 1
+          fi

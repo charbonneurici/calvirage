@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-23T08:11:11.501Z",
+  "updatedAt": "2026-08-23T08:51:42.180Z",
   "season": "2026-2027",
   "matches": [
     {
@@ -3381,6 +3381,66 @@
       "time": "10:45",
       "venue": "Allianz Stadium, Sydney",
       "status": "scheduled"
+    },
+    {
+      "id": "fr-cdm2027-huitiemes",
+      "round": "Huitièmes de finale",
+      "comp": "Coupe du monde",
+      "home": "tbd",
+      "away": "tbd",
+      "homeName": "À déterminer",
+      "awayName": "À déterminer",
+      "date": "2027-10-23",
+      "endDate": "2027-10-24",
+      "time": null,
+      "allDay": true,
+      "venue": null,
+      "status": "tbd"
+    },
+    {
+      "id": "fr-cdm2027-quarts",
+      "round": "Quarts de finale",
+      "comp": "Coupe du monde",
+      "home": "tbd",
+      "away": "tbd",
+      "homeName": "À déterminer",
+      "awayName": "À déterminer",
+      "date": "2027-10-30",
+      "endDate": "2027-10-31",
+      "time": null,
+      "allDay": true,
+      "venue": null,
+      "status": "tbd"
+    },
+    {
+      "id": "fr-cdm2027-demies",
+      "round": "Demi-finales",
+      "comp": "Coupe du monde",
+      "home": "tbd",
+      "away": "tbd",
+      "homeName": "À déterminer",
+      "awayName": "À déterminer",
+      "date": "2027-11-05",
+      "endDate": "2027-11-06",
+      "time": null,
+      "allDay": true,
+      "venue": null,
+      "status": "tbd"
+    },
+    {
+      "id": "fr-cdm2027-finale",
+      "round": "Finale",
+      "comp": "Coupe du monde",
+      "home": "tbd",
+      "away": "tbd",
+      "homeName": "À déterminer",
+      "awayName": "À déterminer",
+      "date": "2027-11-12",
+      "endDate": "2027-11-13",
+      "time": null,
+      "allDay": true,
+      "venue": null,
+      "status": "tbd"
     }
   ]
 }

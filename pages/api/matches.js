@@ -1,16 +1,5 @@
-import path from 'path';
-import fs from 'fs';
 import { todayISO } from '../../lib/dates';
-
-function loadFixtures() {
-  try {
-    const filePath = path.join(process.cwd(), 'data', 'fixtures.json');
-    const raw = fs.readFileSync(filePath, 'utf-8');
-    return JSON.parse(raw).matches || [];
-  } catch {
-    return [];
-  }
-}
+import { loadFixtures, filterForTeams } from '../../lib/fixtures';
 
 export default function handler(req, res) {
   const { teams, limit = 20 } = req.query;
@@ -26,16 +15,8 @@ export default function handler(req, res) {
   const today = todayISO();
   const fixtures = loadFixtures();
 
-  const hasTop14 = fixtures.some(f =>
-    (selected.has(f.home) || selected.has(f.away)) && f.comp?.startsWith('Top 14')
-  );
-
-  const filtered = fixtures
-    .filter(f =>
-      selected.has(f.home) || selected.has(f.away) ||
-      (hasTop14 && (f.home === 'tbd' || f.away === 'tbd'))
-    )
-    .filter(f => f.date >= today)
+  const filtered = filterForTeams(fixtures, selected)
+    .filter(f => (f.endDate || f.date) >= today)
     .slice(0, parseInt(limit));
 
   res.setHeader('Cache-Control', 'public, s-maxage=3600');

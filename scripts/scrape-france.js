@@ -177,6 +177,48 @@ async function fetchSixNations(season) {
   return matches;
 }
 
+/**
+ * Phases finales de la Coupe du monde 2027 — repères de dates.
+ *
+ * Aucune source ne les publie sous forme de match tant que les poules ne sont
+ * pas jouées : les affiches dépendent du classement. Le calendrier World Rugby,
+ * lui, est fixé. On pose donc un repère par tour, en journée entière sur la
+ * fenêtre du tour — un quart peut tomber le samedi ou le dimanche, annoncer
+ * une heure précise serait faux une fois sur deux.
+ *
+ * Ces repères s'effacent d'eux-mêmes : dès qu'un vrai match de la France est
+ * publié dans la fenêtre, le repère correspondant disparaît.
+ */
+const WORLD_CUP_KNOCKOUTS = [
+  { key: 'huitiemes', round: 'Huitièmes de finale', from: '2027-10-23', to: '2027-10-24' },
+  { key: 'quarts',    round: 'Quarts de finale',    from: '2027-10-30', to: '2027-10-31' },
+  { key: 'demies',    round: 'Demi-finales',        from: '2027-11-05', to: '2027-11-06' },
+  { key: 'finale',    round: 'Finale',              from: '2027-11-12', to: '2027-11-13' },
+];
+
+function worldCupPlaceholders(matches) {
+  const worldCupDates = matches.filter(m => m.comp === 'Coupe du monde').map(m => m.date);
+  if (worldCupDates.length === 0) return []; // la France n'est pas au tournoi
+
+  return WORLD_CUP_KNOCKOUTS
+    .filter(ko => !worldCupDates.some(d => d >= ko.from && d <= ko.to))
+    .map(ko => ({
+      id: `${ID_PREFIX}cdm2027-${ko.key}`,
+      round: ko.round,
+      comp: 'Coupe du monde',
+      home: 'tbd',
+      away: 'tbd',
+      homeName: 'À déterminer',
+      awayName: 'À déterminer',
+      date: ko.from,
+      endDate: ko.to,
+      time: null,
+      allDay: true,
+      venue: null,
+      status: 'tbd',
+    }));
+}
+
 const teamCache = new Map();
 async function resolveTeam(ref) {
   if (!teamCache.has(ref)) {
@@ -275,6 +317,12 @@ async function main() {
   // Dédoublonnage (un même match peut remonter sur deux saisons ESPN)
   const byId = new Map(all.map(m => [m.id, m]));
   const franceMatches = [...byId.values()];
+
+  const placeholders = worldCupPlaceholders(franceMatches);
+  if (placeholders.length) {
+    console.log(`  Repères phases finales CDM 2027... ${placeholders.length}`);
+    franceMatches.push(...placeholders);
+  }
 
   let existing = { season: '2026-2027', matches: [] };
   try {

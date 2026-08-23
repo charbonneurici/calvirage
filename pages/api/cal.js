@@ -1,5 +1,4 @@
-import path from 'path';
-import fs from 'fs';
+import { loadFixtures, filterForTeams } from '../../lib/fixtures';
 
 const pad = n => n.toString().padStart(2, '0');
 
@@ -29,19 +28,18 @@ function roundLabel(round, comp) {
   return comp?.toLowerCase().endsWith(round.toLowerCase()) ? '' : ` — ${round}`;
 }
 
+const ymd = d => d.replace(/-/g, '');
+
+function nextDay(dateStr) {
+  const d = new Date(`${dateStr}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
 function esc(str) {
   return (str || '').replace(/[\\;,]/g, m => `\\${m}`).replace(/\n/g, '\\n');
 }
 
-function loadFixtures() {
-  try {
-    const filePath = path.join(process.cwd(), 'data', 'fixtures.json');
-    const raw = fs.readFileSync(filePath, 'utf-8');
-    return JSON.parse(raw).matches || [];
-  } catch {
-    return [];
-  }
-}
 
 export default function handler(req, res) {
   const { teams } = req.query;
@@ -55,12 +53,7 @@ export default function handler(req, res) {
   }
 
   const fixtures = loadFixtures();
-  const hasTop14 = fixtures.some(f => (selected.has(f.home) || selected.has(f.away)) && f.comp?.startsWith('Top 14'));
-  const filtered = fixtures.filter(f =>
-    selected.has(f.home) || selected.has(f.away) ||
-    // Phases finales TBD : visibles pour tout abonné Top 14 (équipes inconnues)
-    (hasTop14 && (f.home === 'tbd' || f.away === 'tbd'))
-  );
+  const filtered = filterForTeams(fixtures, selected);
 
   const lines = [
     'BEGIN:VCALENDAR',
@@ -80,25 +73,35 @@ export default function handler(req, res) {
     lines.push(`UID:${f.id}@calvirage.fr`);
     const isTbd = f.home === 'tbd' || f.away === 'tbd';
     const summary = isTbd
-      ? `🏉 ${esc(f.comp)}`
+      ? `🏉 ${esc(f.comp)}${roundLabel(f.round, f.comp)}${f.allDay ? ' — si la France est qualifiée' : ''}`
       : `🏉 ${esc(f.homeName || f.home)} - ${esc(f.awayName || f.away)}`;
     lines.push(`SUMMARY:${summary}`);
-    lines.push(`DTSTART;TZID=Europe/Paris:${formatDt(f.date, f.time)}`);
-    lines.push(`DTEND;TZID=Europe/Paris:${addHours(f.date, f.time, 2)}`);
+    if (f.allDay) {
+      // DTEND est exclusif : il faut le lendemain du dernier jour de la fenêtre
+      lines.push(`DTSTART;VALUE=DATE:${ymd(f.date)}`);
+      lines.push(`DTEND;VALUE=DATE:${ymd(nextDay(f.endDate || f.date))}`);
+    } else {
+      lines.push(`DTSTART;TZID=Europe/Paris:${formatDt(f.date, f.time)}`);
+      lines.push(`DTEND;TZID=Europe/Paris:${addHours(f.date, f.time, 2)}`);
+    }
     if (f.venue) lines.push(`LOCATION:${esc(f.venue)}`);
-    lines.push(`DESCRIPTION:${esc(f.comp)}${roundLabel(f.round, f.comp)}`);
-    lines.push('STATUS:CONFIRMED');
-    // Alerte la veille à 18h
-    const matchDate = new Date(`${f.date}T${safeTime(f.time)}:00`);
-    const eve = new Date(matchDate);
-    eve.setDate(eve.getDate() - 1);
-    eve.setHours(18, 0, 0, 0);
-    const eveDt = `${eve.getFullYear()}${pad(eve.getMonth()+1)}${pad(eve.getDate())}T180000`;
-    lines.push('BEGIN:VALARM');
-    lines.push('ACTION:DISPLAY');
-    lines.push(`TRIGGER;VALUE=DATE-TIME:${eveDt}`);
-    lines.push(`DESCRIPTION:🏉 Match demain — ${isTbd ? esc(f.comp) : `${esc(f.homeName || f.home)} vs ${esc(f.awayName || f.away)}`}`);
-    lines.push('END:VALARM');
+    lines.push(f.allDay
+      ? `DESCRIPTION:${esc(f.comp)}${roundLabel(f.round, f.comp)} — affiche et horaire connus après les poules`
+      : `DESCRIPTION:${esc(f.comp)}${roundLabel(f.round, f.comp)}`);
+    lines.push(f.allDay ? 'STATUS:TENTATIVE' : 'STATUS:CONFIRMED');
+    // Alerte la veille à 18h — sans objet pour un repère qui couvre un week-end
+    if (!f.allDay) {
+      const matchDate = new Date(`${f.date}T${safeTime(f.time)}:00`);
+      const eve = new Date(matchDate);
+      eve.setDate(eve.getDate() - 1);
+      eve.setHours(18, 0, 0, 0);
+      const eveDt = `${eve.getFullYear()}${pad(eve.getMonth()+1)}${pad(eve.getDate())}T180000`;
+      lines.push('BEGIN:VALARM');
+      lines.push('ACTION:DISPLAY');
+      lines.push(`TRIGGER;VALUE=DATE-TIME:${eveDt}`);
+      lines.push(`DESCRIPTION:🏉 Match demain — ${isTbd ? esc(f.comp) : `${esc(f.homeName || f.home)} vs ${esc(f.awayName || f.away)}`}`);
+      lines.push('END:VALARM');
+    }
     lines.push('END:VEVENT');
   });
 
