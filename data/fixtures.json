@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-08-22T21:58:25.885Z",
+  "updatedAt": "2026-08-23T08:11:11.501Z",
   "season": "2026-2027",
   "matches": [
     {
-      "id": "fr-602502",
+      "id": "fr-6n-2026-france-ireland",
       "round": null,
       "comp": "Tournoi des 6 Nations",
       "home": "france",
@@ -12,11 +12,11 @@
       "awayName": "Irlande",
       "date": "2026-02-05",
       "time": "21:10",
-      "venue": "Stade de France, Saint-Denis",
+      "venue": "Stade de France",
       "status": "scheduled"
     },
     {
-      "id": "fr-602507",
+      "id": "fr-6n-2026-wales-france",
       "round": null,
       "comp": "Tournoi des 6 Nations",
       "home": "wales",
@@ -25,11 +25,11 @@
       "awayName": "France",
       "date": "2026-02-15",
       "time": "16:10",
-      "venue": "Principality Stadium, Cardiff",
+      "venue": "Principality Stadium",
       "status": "scheduled"
     },
     {
-      "id": "fr-602510",
+      "id": "fr-6n-2026-france-italy",
       "round": null,
       "comp": "Tournoi des 6 Nations",
       "home": "france",
@@ -38,11 +38,11 @@
       "awayName": "Italie",
       "date": "2026-02-22",
       "time": "16:10",
-      "venue": "Stade Pierre Mauroy, Lille",
+      "venue": "Stade Pierre Mauroy",
       "status": "scheduled"
     },
     {
-      "id": "fr-602512",
+      "id": "fr-6n-2026-scotland-france",
       "round": null,
       "comp": "Tournoi des 6 Nations",
       "home": "scotland",
@@ -51,11 +51,11 @@
       "awayName": "France",
       "date": "2026-03-07",
       "time": "15:10",
-      "venue": "Scottish Gas Murrayfield, Edinburgh",
+      "venue": "Scottish Gas Murrayfield",
       "status": "scheduled"
     },
     {
-      "id": "fr-602516",
+      "id": "fr-6n-2026-france-england",
       "round": null,
       "comp": "Tournoi des 6 Nations",
       "home": "france",
@@ -64,7 +64,7 @@
       "awayName": "Angleterre",
       "date": "2026-03-14",
       "time": "21:10",
-      "venue": "Stade de France, Saint-Denis",
+      "venue": "Stade de France",
       "status": "scheduled"
     },
     {
@@ -2330,6 +2330,32 @@
       "status": "scheduled"
     },
     {
+      "id": "fr-6n-2027-france-wales",
+      "round": null,
+      "comp": "Tournoi des 6 Nations",
+      "home": "france",
+      "away": "wales",
+      "homeName": "France",
+      "awayName": "Pays de Galles",
+      "date": "2027-02-06",
+      "time": "16:40",
+      "venue": "Stade de France",
+      "status": "scheduled"
+    },
+    {
+      "id": "fr-6n-2027-england-france",
+      "round": null,
+      "comp": "Tournoi des 6 Nations",
+      "home": "england",
+      "away": "france",
+      "homeName": "Angleterre",
+      "awayName": "France",
+      "date": "2027-02-14",
+      "time": "16:10",
+      "venue": "Allianz Stadium",
+      "status": "scheduled"
+    },
+    {
       "id": "lnr-11931",
       "round": 17,
       "comp": "Top 14",
@@ -2421,6 +2447,19 @@
       "status": "scheduled"
     },
     {
+      "id": "fr-6n-2027-france-scotland",
+      "round": null,
+      "comp": "Tournoi des 6 Nations",
+      "home": "france",
+      "away": "scotland",
+      "homeName": "France",
+      "awayName": "Écosse",
+      "date": "2027-02-21",
+      "time": "15:10",
+      "venue": "Stade de France",
+      "status": "scheduled"
+    },
+    {
       "id": "lnr-11938",
       "round": 18,
       "comp": "Top 14",
@@ -2509,6 +2548,32 @@
       "date": "2027-02-27",
       "time": null,
       "venue": "Paris La Défense Arena, Nanterre",
+      "status": "scheduled"
+    },
+    {
+      "id": "fr-6n-2027-italy-france",
+      "round": null,
+      "comp": "Tournoi des 6 Nations",
+      "home": "italy",
+      "away": "france",
+      "homeName": "Italie",
+      "awayName": "France",
+      "date": "2027-03-06",
+      "time": "14:10",
+      "venue": "Stadio Olimpico",
+      "status": "scheduled"
+    },
+    {
+      "id": "fr-6n-2027-ireland-france",
+      "round": null,
+      "comp": "Tournoi des 6 Nations",
+      "home": "ireland",
+      "away": "france",
+      "homeName": "Irlande",
+      "awayName": "France",
+      "date": "2027-03-13",
+      "time": "21:10",
+      "venue": "Aviva Stadium",
       "status": "scheduled"
     },
     {
