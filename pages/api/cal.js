@@ -1,4 +1,4 @@
-import { loadFixtures, filterForTeams } from '../../lib/fixtures';
+import { loadFixtures, filterForTeams, parseTeams, calendarName, shortMatchLabel } from '../../lib/fixtures';
 
 const pad = n => n.toString().padStart(2, '0');
 
@@ -45,22 +45,22 @@ export default function handler(req, res) {
   const { teams } = req.query;
   if (!teams) return res.status(400).send('No teams selected');
 
-  let selected;
-  try {
-    selected = new Set(Buffer.from(teams, 'base64').toString().split(',').map(t => t.trim()));
-  } catch {
-    return res.status(400).send('Invalid teams parameter');
-  }
+  const selected = parseTeams(teams);
+  if (!selected) return res.status(400).send('Invalid teams parameter');
 
   const fixtures = loadFixtures();
   const filtered = filterForTeams(fixtures, selected);
+
+  // Le nom du calendrier est ce qu'on lit dans la barre latérale de son agenda,
+  // et ce à quoi on assigne une couleur : il doit décrire l'abonnement.
+  const name = calendarName(selected);
 
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//CalVirage//Rugby//FR',
-    'X-WR-CALNAME:CalVirage 🏉',
-    'X-WR-CALDESC:Top 14 — CalVirage',
+    `X-WR-CALNAME:${esc(name)}`,
+    `X-WR-CALDESC:${esc(name)} — calvirage.vercel.app`,
     'X-WR-TIMEZONE:Europe/Paris',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
@@ -72,9 +72,11 @@ export default function handler(req, res) {
     lines.push('BEGIN:VEVENT');
     lines.push(`UID:${f.id}@calvirage.fr`);
     const isTbd = f.home === 'tbd' || f.away === 'tbd';
+    // Pour un match sans affiche, le tour passe devant : c'est l'info qui
+    // distingue, et elle survit à la troncature en vue mois.
     const summary = isTbd
-      ? `🏉 ${esc(f.comp)}${roundLabel(f.round, f.comp)}${f.allDay ? ' — si la France est qualifiée' : ''}`
-      : `🏉 ${esc(f.homeName || f.home)} - ${esc(f.awayName || f.away)}`;
+      ? `🏉 ${esc(f.round ? `${f.round} — ${f.comp}` : f.comp)}`
+      : `🏉 ${esc(shortMatchLabel(f))}`;
     lines.push(`SUMMARY:${summary}`);
     if (f.allDay) {
       // DTEND est exclusif : il faut le lendemain du dernier jour de la fenêtre
@@ -86,8 +88,8 @@ export default function handler(req, res) {
     }
     if (f.venue) lines.push(`LOCATION:${esc(f.venue)}`);
     lines.push(f.allDay
-      ? `DESCRIPTION:${esc(f.comp)}${roundLabel(f.round, f.comp)} — affiche et horaire connus après les poules`
-      : `DESCRIPTION:${esc(f.comp)}${roundLabel(f.round, f.comp)}`);
+      ? `DESCRIPTION:Si la France est qualifiée.\\nAffiche et horaire connus après les poules.`
+      : `DESCRIPTION:${esc(f.homeName || f.home)} - ${esc(f.awayName || f.away)}\\n${esc(f.comp)}${roundLabel(f.round, f.comp)}`);
     lines.push(f.allDay ? 'STATUS:TENTATIVE' : 'STATUS:CONFIRMED');
     // Alerte la veille à 18h — sans objet pour un repère qui couvre un week-end
     if (!f.allDay) {
@@ -99,7 +101,7 @@ export default function handler(req, res) {
       lines.push('BEGIN:VALARM');
       lines.push('ACTION:DISPLAY');
       lines.push(`TRIGGER;VALUE=DATE-TIME:${eveDt}`);
-      lines.push(`DESCRIPTION:🏉 Match demain — ${isTbd ? esc(f.comp) : `${esc(f.homeName || f.home)} vs ${esc(f.awayName || f.away)}`}`);
+      lines.push(`DESCRIPTION:🏉 Match demain — ${isTbd ? esc(f.comp) : esc(shortMatchLabel(f))}`);
       lines.push('END:VALARM');
     }
     lines.push('END:VEVENT');

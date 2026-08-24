@@ -98,6 +98,45 @@ function FranceCard({ team, selected, onToggle }) {
   );
 }
 
+// Raccourci "tout le rugby". Volontairement au-dessus des équipes : c'est un
+// choix différent, s'abonner aux compétitions plutôt qu'à des équipes.
+function AllCard({ selected, count, onToggle }) {
+  return (
+    <button
+      onClick={onToggle}
+      aria-pressed={selected}
+      className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E63329] focus-visible:ring-offset-2 ${
+        selected
+          ? 'border-[#E63329] bg-[#E63329]'
+          : 'border-[#E8E8E6] bg-white hover:border-[#CBCBC9]'
+      }`}
+    >
+      <span className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 text-2xl ${
+        selected ? 'bg-white/15' : 'bg-[#F7F6F3]'
+      }`} aria-hidden="true">🏉</span>
+
+      <div className="min-w-0 flex-1">
+        <div className={`text-sm font-black uppercase tracking-tight ${selected ? 'text-white' : 'text-[#111]'}`}>
+          Tout le rugby français
+        </div>
+        <div className={`text-xs mt-0.5 ${selected ? 'text-white/70' : 'text-[#999]'}`}>
+          Les 14 clubs et le XV de France{count > 0 ? ` — ${count} matchs à venir` : ''}
+        </div>
+      </div>
+
+      <span className={`shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${
+        selected ? 'bg-white' : 'border-2 border-[#E8E8E6]'
+      }`}>
+        {selected && (
+          <svg className="w-3 h-3 text-[#E63329]" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+        )}
+      </span>
+    </button>
+  );
+}
+
 // Les trois arguments qui distinguent un abonnement d'un fichier .ics téléchargé
 const VALUE_PROPS = [
   {
@@ -164,7 +203,11 @@ export default function Home({ teams, franceTeam, weekendMatches, totalMatches }
   };
 
   const generate = async () => {
-    const encoded = btoa(Array.from(selected).join(','));
+    // Tout coché = abonnement aux compétitions, pas à une liste d'équipes figée :
+    // le calendrier suivra les montées et descentes en Top 14.
+    const encoded = selected.size === allIds.length
+      ? 'all'
+      : btoa(Array.from(selected).join(','));
     setResult(`${BASE_URL}/api/cal?teams=${encoded}`);
     setPreview(null);
     // Le résultat apparaît sous le sélecteur : on y amène l'utilisateur
@@ -185,6 +228,7 @@ export default function Home({ teams, franceTeam, weekendMatches, totalMatches }
   };
 
   const count = selected.size;
+  const isAll = count === allIds.length;
   const webcalUrl = result?.replace('https://', 'webcal://');
 
   // "Prochainement" filtré sur la sélection
@@ -271,12 +315,14 @@ export default function Home({ teams, franceTeam, weekendMatches, totalMatches }
                 </h2>
                 <p className="text-sm text-[#999] mt-0.5">Autant que tu veux — elles iront dans le même calendrier.</p>
               </div>
-              <button
-                onClick={toggleAll}
-                className="self-start text-xs font-bold text-[#999] hover:text-[#111] transition-colors underline underline-offset-2 whitespace-nowrap sm:mt-1"
-              >
-                {count === allIds.length ? 'Tout décocher' : 'Tout sélectionner'}
-              </button>
+            </div>
+
+            <div className="mb-6">
+              <AllCard
+                selected={isAll}
+                count={totalMatches}
+                onToggle={toggleAll}
+              />
             </div>
 
             <p className="text-[10px] font-black text-[#AAA] uppercase tracking-widest mb-3">Sélection nationale</p>

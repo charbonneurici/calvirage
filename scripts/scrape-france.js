@@ -178,32 +178,102 @@ async function fetchSixNations(season) {
 }
 
 /**
- * Phases finales de la Coupe du monde 2027 — repères de dates.
+ * Phases finales de la Coupe du monde — repères de dates.
  *
  * Aucune source ne les publie sous forme de match tant que les poules ne sont
  * pas jouées : les affiches dépendent du classement. Le calendrier World Rugby,
- * lui, est fixé. On pose donc un repère par tour, en journée entière sur la
- * fenêtre du tour — un quart peut tomber le samedi ou le dimanche, annoncer
- * une heure précise serait faux une fois sur deux.
+ * lui, est fixé — et l'article Wikipédia du tournoi le décrit en wikitexte
+ * structuré (un modèle `rugbybox` par match, avec date, heure et décalage UTC),
+ * bien plus stable à parser que du HTML rendu.
  *
- * Ces repères s'effacent d'eux-mêmes : dès qu'un vrai match de la France est
- * publié dans la fenêtre, le repère correspondant disparaît.
+ * On pose un repère par tour, en journée entière sur la fenêtre du tour : un
+ * quart peut tomber le samedi ou le dimanche, annoncer une heure précise serait
+ * faux une fois sur deux. Les repères s'effacent d'eux-mêmes dès qu'un vrai
+ * match de la France est publié dans leur fenêtre.
  */
-const WORLD_CUP_KNOCKOUTS = [
-  { key: 'huitiemes', round: 'Huitièmes de finale', from: '2027-10-23', to: '2027-10-24' },
-  { key: 'quarts',    round: 'Quarts de finale',    from: '2027-10-30', to: '2027-10-31' },
-  { key: 'demies',    round: 'Demi-finales',        from: '2027-11-05', to: '2027-11-06' },
-  { key: 'finale',    round: 'Finale',              from: '2027-11-12', to: '2027-11-13' },
+const WIKI_RAW = 'https://en.wikipedia.org/w/index.php?action=raw&title=';
+
+// Section de l'article → libellé français du tour. L'ordre fait l'ordre d'affichage.
+const KNOCKOUT_SECTIONS = [
+  { section: 'Round of 16',    key: 'huitiemes', round: 'Huitièmes de finale' },
+  { section: 'Quarter-finals', key: 'quarts',    round: 'Quarts de finale'    },
+  { section: 'Semi-finals',    key: 'demies',    round: 'Demi-finales'        },
+  { section: 'Bronze final',   key: 'finale',    round: 'Finale'              },
+  { section: 'Final',          key: 'finale',    round: 'Finale'              },
 ];
 
-function worldCupPlaceholders(matches) {
+const WIKI_MONTHS = {
+  january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
+  july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
+};
+
+/**
+ * "30 October 2027" + "16:45 [[...|AEDT]] ([[UTC+11]])" → date à Paris.
+ * Un match à 16h45 à Sydney tombe le matin en France : c'est bien la date
+ * parisienne qui doit borner la fenêtre affichée aux abonnés.
+ */
+function wikiKickoffToParisDate(dateRaw, timeRaw) {
+  const dm = dateRaw.match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+  const tm = timeRaw.match(/(\d{1,2}):(\d{2})/);
+  const om = timeRaw.match(/UTC([+-])(\d{1,2})(?::(\d{2}))?/);
+  if (!dm || !tm || !om) return null;
+
+  const month = WIKI_MONTHS[dm[2].toLowerCase()];
+  if (!month) return null;
+
+  const offsetMin = (om[1] === '-' ? -1 : 1) * (parseInt(om[2], 10) * 60 + parseInt(om[3] || '0', 10));
+  const utcMs = Date.UTC(+dm[3], month - 1, +dm[1], +tm[1], +tm[2]) - offsetMin * 60000;
+  return toParis(new Date(utcMs).toISOString()).date;
+}
+
+async function fetchWorldCupWindows(year) {
+  const res = await fetch(`${WIKI_RAW}${year}_Rugby_World_Cup`, {
+    headers: { 'User-Agent': 'CalVirage/1.0 (https://calvirage.vercel.app)' },
+  });
+  if (!res.ok) throw new Error(`Wikipédia HTTP ${res.status}`);
+  const wiki = await res.text();
+
+  const windows = new Map();
+
+  for (const { section, key, round } of KNOCKOUT_SECTIONS) {
+    // Le corps de la section court jusqu'au titre suivant
+    const heading = new RegExp(`^={2,4}\\s*${section}\\s*={2,4}\\s*$`, 'im');
+    const m = heading.exec(wiki);
+    if (!m) continue;
+    const rest = wiki.slice(m.index + m[0].length);
+    const nextHeading = rest.search(/^={2,4}[^=\n]+={2,4}\s*$/m);
+    const body = nextHeading === -1 ? rest : rest.slice(0, nextHeading);
+
+    for (const box of body.matchAll(/\{\{\s*rugbybox([\s\S]*?)\}\}/g)) {
+      // Un champ par ligne, et la valeur contient des `|` de liens wiki
+      // ([[Australian Eastern Daylight Time|AEDT]]) : on capture la ligne entière.
+      const field = name => (box[1].match(new RegExp(`\\|\\s*${name}\\s*=\\s*([^\n]+)`)) || [])[1]?.trim();
+      const date = wikiKickoffToParisDate(field('date') || '', field('time') || '');
+      if (!date) continue;
+
+      const w = windows.get(key) || { key, round, from: date, to: date };
+      if (date < w.from) w.from = date;
+      if (date > w.to) w.to = date;
+      windows.set(key, w);
+    }
+  }
+
+  return [...windows.values()].sort((a, b) => a.from.localeCompare(b.from));
+}
+
+function worldCupPlaceholders(matches, windows, previous) {
   const worldCupDates = matches.filter(m => m.comp === 'Coupe du monde').map(m => m.date);
   if (worldCupDates.length === 0) return []; // la France n'est pas au tournoi
 
-  return WORLD_CUP_KNOCKOUTS
+  // Wikipédia muet : on garde les repères déjà connus plutôt que de les effacer
+  const source = windows.length ? windows : previous.map(p => ({
+    key: p.id.split('-').pop(), round: p.round, from: p.date, to: p.endDate || p.date,
+  }));
+
+  return source
     .filter(ko => !worldCupDates.some(d => d >= ko.from && d <= ko.to))
     .map(ko => ({
-      id: `${ID_PREFIX}cdm2027-${ko.key}`,
+      id: `${ID_PREFIX}cdm-${ko.from.slice(0, 4)}-${ko.key}`,
       round: ko.round,
       comp: 'Coupe du monde',
       home: 'tbd',
@@ -314,21 +384,35 @@ async function main() {
     process.exit(1);
   }
 
-  // Dédoublonnage (un même match peut remonter sur deux saisons ESPN)
-  const byId = new Map(all.map(m => [m.id, m]));
-  const franceMatches = [...byId.values()];
-
-  const placeholders = worldCupPlaceholders(franceMatches);
-  if (placeholders.length) {
-    console.log(`  Repères phases finales CDM 2027... ${placeholders.length}`);
-    franceMatches.push(...placeholders);
-  }
-
   let existing = { season: '2026-2027', matches: [] };
   try {
     existing = JSON.parse(fs.readFileSync(OUTPUT_FILE, 'utf-8'));
   } catch (e) {
     console.warn('⚠️  fixtures.json illisible, création:', e.message);
+  }
+
+  // Dédoublonnage (un même match peut remonter sur deux saisons ESPN)
+  const byId = new Map(all.map(m => [m.id, m]));
+  const franceMatches = [...byId.values()];
+
+  // Repères des phases finales de la Coupe du monde
+  const worldCupYears = [...new Set(
+    franceMatches.filter(m => m.comp === 'Coupe du monde').map(m => m.date.slice(0, 4))
+  )];
+  for (const year of worldCupYears) {
+    process.stdout.write(`  Repères phases finales CDM ${year}... `);
+    let windows = [];
+    try {
+      windows = await fetchWorldCupWindows(year);
+    } catch (e) {
+      console.log(`⚠️  ${e.message} — repères existants conservés`);
+    }
+    const previous = (existing.matches || []).filter(m => m.id?.startsWith(`${ID_PREFIX}cdm-${year}-`));
+    const placeholders = worldCupPlaceholders(franceMatches, windows, previous);
+    franceMatches.push(...placeholders);
+    if (windows.length) {
+      console.log(`${placeholders.length} (${windows.map(w => w.round).join(', ')})`);
+    }
   }
 
   const others = (existing.matches || []).filter(m => !m.id?.startsWith(ID_PREFIX));

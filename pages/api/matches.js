@@ -1,16 +1,12 @@
 import { todayISO } from '../../lib/dates';
-import { loadFixtures, filterForTeams } from '../../lib/fixtures';
+import { loadFixtures, filterForTeams, parseTeams } from '../../lib/fixtures';
 
 export default function handler(req, res) {
   const { teams, limit = 20 } = req.query;
   if (!teams) return res.status(400).json({ error: 'No teams' });
 
-  let selected;
-  try {
-    selected = new Set(Buffer.from(teams, 'base64').toString().split(',').map(t => t.trim()));
-  } catch {
-    return res.status(400).json({ error: 'Invalid teams' });
-  }
+  const selected = parseTeams(teams);
+  if (!selected) return res.status(400).json({ error: 'Invalid teams' });
 
   const today = todayISO();
   const fixtures = loadFixtures();
