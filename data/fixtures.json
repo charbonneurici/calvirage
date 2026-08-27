@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-24T12:34:27.141Z",
+  "updatedAt": "2026-08-27T17:39:22.549Z",
   "season": "2026-2027",
   "matches": [
     {
@@ -115,7 +115,7 @@
       "homeName": "Aviron Bayonnais",
       "awayName": "RC Toulon",
       "date": "2026-09-05",
-      "time": "19:00",
+      "time": "19:05",
       "venue": "Stade Jean-Dauger, Bayonne",
       "status": "scheduled"
     },
@@ -128,7 +128,7 @@
       "homeName": "Castres Olympique",
       "awayName": "RC Vannes",
       "date": "2026-09-05",
-      "time": "19:00",
+      "time": "19:05",
       "venue": "Stade Pierre-Fabre, Castres",
       "status": "scheduled"
     },
@@ -141,7 +141,7 @@
       "homeName": "LOU Rugby",
       "awayName": "ASM Clermont",
       "date": "2026-09-05",
-      "time": "19:00",
+      "time": "19:05",
       "venue": "Matmut Stadium, Lyon",
       "status": "scheduled"
     },
@@ -154,7 +154,7 @@
       "homeName": "Montpellier Hérault Rugby",
       "awayName": "Section Paloise",
       "date": "2026-09-05",
-      "time": "19:00",
+      "time": "19:05",
       "venue": "GGL Stadium, Montpellier",
       "status": "scheduled"
     },
@@ -167,7 +167,7 @@
       "homeName": "Stade Français Paris",
       "awayName": "USA Perpignan",
       "date": "2026-09-05",
-      "time": "19:00",
+      "time": "19:05",
       "venue": "Stade Jean-Bouin, Paris",
       "status": "scheduled"
     },
@@ -737,7 +737,7 @@
       "home": "larochelle",
       "away": "emirates-lions",
       "homeName": "La Rochelle",
-      "awayName": "Lions",
+      "awayName": "10bet Lions",
       "date": "2026-10-17",
       "time": "16:30",
       "venue": "Stade Marcel Deflandre",
@@ -1373,7 +1373,7 @@
       "comp": "Champions Cup",
       "home": "emirates-lions",
       "away": "toulouse",
-      "homeName": "Lions",
+      "homeName": "10bet Lions",
       "awayName": "Toulouse",
       "date": "2026-12-12",
       "time": "13:00",
@@ -3303,32 +3303,6 @@
       "time": null,
       "venue": "Paris La Défense Arena, Nanterre",
       "status": "scheduled"
-    },
-    {
-      "id": "lnr-access-1",
-      "round": null,
-      "comp": "Top 14 — Access",
-      "home": "tbd",
-      "away": "tbd",
-      "homeName": "À déterminer",
-      "awayName": "À déterminer",
-      "date": "2027-06-13",
-      "time": null,
-      "venue": null,
-      "status": "tbd"
-    },
-    {
-      "id": "lnr-demie-1",
-      "round": null,
-      "comp": "Top 14 — Demi-Finale",
-      "home": "tbd",
-      "away": "tbd",
-      "homeName": "À déterminer",
-      "awayName": "À déterminer",
-      "date": "2027-06-13",
-      "time": null,
-      "venue": null,
-      "status": "tbd"
     },
     {
       "id": "lnr-finale-1",
