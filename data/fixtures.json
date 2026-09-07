@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-03T11:07:07.714Z",
+  "updatedAt": "2026-09-07T11:20:45.042Z",
   "season": "2026-2027",
   "matches": [
     {
@@ -115,9 +115,9 @@
       "homeName": "Aviron Bayonnais",
       "awayName": "RC Toulon",
       "date": "2026-09-05",
-      "time": "19:05",
+      "time": null,
       "venue": "Stade Jean-Dauger, Bayonne",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11821",
@@ -128,9 +128,9 @@
       "homeName": "Castres Olympique",
       "awayName": "RC Vannes",
       "date": "2026-09-05",
-      "time": "19:05",
+      "time": null,
       "venue": "Stade Pierre-Fabre, Castres",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11823",
@@ -141,9 +141,9 @@
       "homeName": "LOU Rugby",
       "awayName": "ASM Clermont",
       "date": "2026-09-05",
-      "time": "19:05",
+      "time": null,
       "venue": "Matmut Stadium, Lyon",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11824",
@@ -154,9 +154,9 @@
       "homeName": "Montpellier Hérault Rugby",
       "awayName": "Section Paloise",
       "date": "2026-09-05",
-      "time": "19:05",
+      "time": null,
       "venue": "GGL Stadium, Montpellier",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11825",
@@ -167,9 +167,9 @@
       "homeName": "Stade Français Paris",
       "awayName": "USA Perpignan",
       "date": "2026-09-05",
-      "time": "19:05",
+      "time": null,
       "venue": "Stade Jean-Bouin, Paris",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11820",
@@ -180,9 +180,9 @@
       "homeName": "Union Bordeaux-Bègles",
       "awayName": "Racing 92",
       "date": "2026-09-05",
-      "time": "21:15",
+      "time": null,
       "venue": "Stade Chaban-Delmas, Bordeaux",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11822",
@@ -193,9 +193,9 @@
       "homeName": "Stade Rochelais",
       "awayName": "Stade Toulousain",
       "date": "2026-09-06",
-      "time": "21:05",
+      "time": null,
       "venue": "Stade Marcel-Deflandre, La Rochelle",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11826",
