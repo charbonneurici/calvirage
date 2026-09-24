@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-21T11:41:16.110Z",
+  "updatedAt": "2026-09-24T11:35:36.407Z",
   "season": "2026-2027",
   "matches": [
     {
@@ -297,9 +297,9 @@
       "homeName": "Castres Olympique",
       "awayName": "RC Toulon",
       "date": "2026-09-19",
-      "time": "14:30",
+      "time": null,
       "venue": "Stade Pierre-Fabre, Castres",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11833",
@@ -310,9 +310,9 @@
       "homeName": "Aviron Bayonnais",
       "awayName": "ASM Clermont",
       "date": "2026-09-19",
-      "time": "16:35",
+      "time": null,
       "venue": "Stade Jean-Dauger, Bayonne",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11837",
@@ -323,9 +323,9 @@
       "homeName": "Stade Rochelais",
       "awayName": "Racing 92",
       "date": "2026-09-19",
-      "time": "16:35",
+      "time": null,
       "venue": "Stade Marcel-Deflandre, La Rochelle",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11838",
@@ -336,9 +336,9 @@
       "homeName": "LOU Rugby",
       "awayName": "Section Paloise",
       "date": "2026-09-19",
-      "time": "16:35",
+      "time": null,
       "venue": "Matmut Stadium, Lyon",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11839",
@@ -349,9 +349,9 @@
       "homeName": "Montpellier Hérault Rugby",
       "awayName": "USA Perpignan",
       "date": "2026-09-19",
-      "time": "16:35",
+      "time": null,
       "venue": "GGL Stadium, Montpellier",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11835",
@@ -362,9 +362,9 @@
       "homeName": "RC Vannes",
       "awayName": "Stade Toulousain",
       "date": "2026-09-19",
-      "time": "21:00",
+      "time": null,
       "venue": "Stade de la Rabine, Vannes",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11834",
@@ -375,9 +375,9 @@
       "homeName": "Union Bordeaux-Bègles",
       "awayName": "Stade Français Paris",
       "date": "2026-09-20",
-      "time": "21:05",
+      "time": null,
       "venue": "Stade Chaban-Delmas, Bordeaux",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11840",
@@ -562,6 +562,19 @@
       "status": "scheduled"
     },
     {
+      "id": "lnr-11857",
+      "round": 6,
+      "comp": "Top 14",
+      "home": "stadefrancais",
+      "away": "montpellier",
+      "homeName": "Stade Français Paris",
+      "awayName": "Montpellier Hérault Rugby",
+      "date": "2026-10-10",
+      "time": "14:30",
+      "venue": "Stade Jean-Bouin, Paris",
+      "status": "scheduled"
+    },
+    {
       "id": "lnr-11854",
       "round": 6,
       "comp": "Top 14",
@@ -570,21 +583,8 @@
       "homeName": "USA Perpignan",
       "awayName": "RC Vannes",
       "date": "2026-10-10",
-      "time": null,
+      "time": "16:35",
       "venue": "Stade Aimé-Giral, Perpignan",
-      "status": "scheduled"
-    },
-    {
-      "id": "lnr-11855",
-      "round": 6,
-      "comp": "Top 14",
-      "home": "clermont",
-      "away": "bordeaux",
-      "homeName": "ASM Clermont",
-      "awayName": "Union Bordeaux-Bègles",
-      "date": "2026-10-10",
-      "time": null,
-      "venue": "Stade Marcel-Michelin, Clermont-Ferrand",
       "status": "scheduled"
     },
     {
@@ -596,21 +596,8 @@
       "homeName": "LOU Rugby",
       "awayName": "Stade Rochelais",
       "date": "2026-10-10",
-      "time": null,
+      "time": "16:35",
       "venue": "Matmut Stadium, Lyon",
-      "status": "scheduled"
-    },
-    {
-      "id": "lnr-11857",
-      "round": 6,
-      "comp": "Top 14",
-      "home": "stadefrancais",
-      "away": "montpellier",
-      "homeName": "Stade Français Paris",
-      "awayName": "Montpellier Hérault Rugby",
-      "date": "2026-10-10",
-      "time": null,
-      "venue": "Stade Jean-Bouin, Paris",
       "status": "scheduled"
     },
     {
@@ -622,7 +609,7 @@
       "homeName": "Section Paloise",
       "awayName": "Castres Olympique",
       "date": "2026-10-10",
-      "time": null,
+      "time": "16:35",
       "venue": "Stade du Hameau, Pau",
       "status": "scheduled"
     },
@@ -635,8 +622,21 @@
       "homeName": "RC Toulon",
       "awayName": "Racing 92",
       "date": "2026-10-10",
-      "time": null,
+      "time": "16:35",
       "venue": "Stade Mayol, Toulon",
+      "status": "scheduled"
+    },
+    {
+      "id": "lnr-11855",
+      "round": 6,
+      "comp": "Top 14",
+      "home": "clermont",
+      "away": "bordeaux",
+      "homeName": "ASM Clermont",
+      "awayName": "Union Bordeaux-Bègles",
+      "date": "2026-10-10",
+      "time": "21:00",
+      "venue": "Stade Marcel-Michelin, Clermont-Ferrand",
       "status": "scheduled"
     },
     {
@@ -647,8 +647,8 @@
       "away": "bayonne",
       "homeName": "Stade Toulousain",
       "awayName": "Aviron Bayonnais",
-      "date": "2026-10-10",
-      "time": null,
+      "date": "2026-10-11",
+      "time": "21:05",
       "venue": "Stade Ernest-Wallon, Toulouse",
       "status": "scheduled"
     },
