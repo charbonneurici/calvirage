@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-24T11:35:36.407Z",
+  "updatedAt": "2026-09-28T12:40:18.928Z",
   "season": "2026-2027",
   "matches": [
     {
@@ -388,9 +388,9 @@
       "homeName": "USA Perpignan",
       "awayName": "Union Bordeaux-Bègles",
       "date": "2026-09-26",
-      "time": "14:30",
+      "time": null,
       "venue": "Stade Aimé-Giral, Perpignan",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11841",
@@ -401,9 +401,9 @@
       "homeName": "ASM Clermont",
       "awayName": "Castres Olympique",
       "date": "2026-09-26",
-      "time": "16:35",
+      "time": null,
       "venue": "Stade Marcel-Michelin, Clermont-Ferrand",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11842",
@@ -414,9 +414,9 @@
       "homeName": "Stade Français Paris",
       "awayName": "LOU Rugby",
       "date": "2026-09-26",
-      "time": "16:35",
+      "time": null,
       "venue": "Stade Jean-Bouin, Paris",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11844",
@@ -427,9 +427,9 @@
       "homeName": "Racing 92",
       "awayName": "Aviron Bayonnais",
       "date": "2026-09-26",
-      "time": "16:35",
+      "time": null,
       "venue": "Paris La Défense Arena, Nanterre",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11845",
@@ -440,9 +440,9 @@
       "homeName": "RC Toulon",
       "awayName": "RC Vannes",
       "date": "2026-09-26",
-      "time": "16:35",
+      "time": null,
       "venue": "Stade Mayol, Toulon",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11843",
@@ -453,9 +453,9 @@
       "homeName": "Section Paloise",
       "awayName": "Stade Rochelais",
       "date": "2026-09-26",
-      "time": "21:00",
+      "time": null,
       "venue": "Stade du Hameau, Pau",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11846",
@@ -466,9 +466,9 @@
       "homeName": "Stade Toulousain",
       "awayName": "Montpellier Hérault Rugby",
       "date": "2026-09-27",
-      "time": "21:05",
+      "time": null,
       "venue": "Stade Ernest-Wallon, Toulouse",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11848",
