@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-01T12:58:58.812Z",
+  "updatedAt": "2026-10-05T13:20:31.665Z",
   "season": "2026-2027",
   "matches": [
     {
@@ -479,9 +479,9 @@
       "homeName": "Union Bordeaux-Bègles",
       "awayName": "LOU Rugby",
       "date": "2026-10-03",
-      "time": "14:30",
+      "time": null,
       "venue": "Stade Chaban-Delmas, Bordeaux",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11847",
@@ -492,9 +492,9 @@
       "homeName": "Aviron Bayonnais",
       "awayName": "Stade Français Paris",
       "date": "2026-10-03",
-      "time": "16:35",
+      "time": null,
       "venue": "Stade Jean-Dauger, Bayonne",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11849",
@@ -505,9 +505,9 @@
       "homeName": "RC Vannes",
       "awayName": "Section Paloise",
       "date": "2026-10-03",
-      "time": "16:35",
+      "time": null,
       "venue": "Stade de la Rabine, Vannes",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11851",
@@ -518,9 +518,9 @@
       "homeName": "Stade Rochelais",
       "awayName": "ASM Clermont",
       "date": "2026-10-03",
-      "time": "16:35",
+      "time": null,
       "venue": "Stade Marcel-Deflandre, La Rochelle",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11853",
@@ -531,9 +531,9 @@
       "homeName": "Racing 92",
       "awayName": "USA Perpignan",
       "date": "2026-10-03",
-      "time": "16:35",
+      "time": null,
       "venue": "Paris La Défense Arena, Nanterre",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11850",
@@ -544,9 +544,9 @@
       "homeName": "Castres Olympique",
       "awayName": "Stade Toulousain",
       "date": "2026-10-03",
-      "time": "21:00",
+      "time": null,
       "venue": "Stade Pierre-Fabre, Castres",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11852",
@@ -557,9 +557,9 @@
       "homeName": "Montpellier Hérault Rugby",
       "awayName": "RC Toulon",
       "date": "2026-10-04",
-      "time": "21:05",
+      "time": null,
       "venue": "GGL Stadium, Montpellier",
-      "status": "scheduled"
+      "status": "played"
     },
     {
       "id": "lnr-11857",
